@@ -7,6 +7,8 @@ wampthemes/simple/
 wampthemes/copy_modal.php
 wampthemes/popupmodal.css
 wampthemes/select_themes.php
+# favicons
+favicon.ico
 
 # Language files (WampServer defaults)
 wamplangues/
