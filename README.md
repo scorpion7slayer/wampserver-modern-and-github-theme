@@ -27,19 +27,11 @@ Vibrant dark theme with multiple accent colors.
 
 ## ✨ Features
 
-### 🔍 Search & Filters
-
--   **Global search**: Filter all columns simultaneously (shortcut: `/`)
--   **Per-column filters**: Independent search for each list
--   **Live counters**: Dynamic item count badges
--   **Persistent state**: Filters remembered across sessions
-
 ### 🐙 GitHub Integration
 
 -   **Auto-detection**: Widget appears only when `.git` exists
 -   **Quick access**: Open repo, issues, pulls with one click
 -   **Auto-fill**: Reads `owner/repo` from `.git/config`
--   **GitHub search**: Direct search from homepage
 
 ### 🛠️ Productivity Tools
 

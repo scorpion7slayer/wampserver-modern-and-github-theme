@@ -1,16 +1,20 @@
 /* Modern Dark theme for WampServer Home */
 
 :root {
-    --bg: #0f1216;
-    --bg-soft: #11161d;
-    --panel: #161b22;
-    --panel-2: #1b2330;
-    --text: #c9d1d9;
-    --muted: #8b949e;
-    --accent: #58a6ff;
-    --accent-2: #f78166;
-    --border: #30363d;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    --bg: #18202c;
+    --bg-soft: #1f2836;
+    --panel: #202b3a;
+    --panel-2: #253347;
+    --panel-3: #2b3a52;
+    --text: #e6edf3;
+    --muted: #a9b4c3;
+    --accent: #5fb4ff;
+    --accent-2: #ff8a5b;
+    --accent-3: #78dba9;
+    --accent-4: #c59fff;
+    --border: #33445b;
+    --ring: rgba(95, 180, 255, 0.35);
+    --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
 html,
@@ -21,13 +25,18 @@ body {
 
 body {
     background: radial-gradient(
-            1200px 600px at 20% -20%,
-            #182335 0%,
-            var(--bg) 60%
-        )
-        fixed;
+            900px 400px at 10% -20%,
+            rgba(95, 180, 255, 0.08),
+            transparent 70%
+        ),
+        radial-gradient(
+            900px 400px at 110% -20%,
+            rgba(197, 159, 255, 0.08),
+            transparent 70%
+        ),
+        linear-gradient(180deg, var(--bg-soft), var(--bg));
     color: var(--text);
-    font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
         Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -37,23 +46,400 @@ abbr {
     text-decoration: none;
     border: none;
 }
-/* Modern Dark (breeze) – plus clair, plus coloré */
 
-:root {
-    --bg: #18202c;
-    --bg-soft: #1f2836;
-    --panel: #202b3a;
-    --panel-2: #253347;
-    --panel-3: #2b3a52;
-    --text: #e6edf3;
-    --muted: #a9b4c3;
-    --accent: #5fb4ff; /* bleu */
-    --accent-2: #ff8a5b; /* corail */
-    --accent-3: #78dba9; /* vert */
-    --accent-4: #c59fff; /* violet */
-    --border: #33445b;
-    --ring: rgba(95, 180, 255, 0.35);
-    --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+a:hover {
+    color: #8bd0ff;
+}
+
+/* Header */
+#head {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    background: linear-gradient(
+        180deg,
+        rgba(32, 43, 58, 0.85),
+        rgba(32, 43, 58, 0.65)
+    );
+    backdrop-filter: saturate(140%) blur(8px);
+    box-shadow: 0 1px 0 var(--border);
+}
+
+.innerhead {
+    max-width: 1120px;
+    margin: 0 auto;
+    height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.innerhead h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 0.4px;
+    font-weight: 700;
+}
+.innerhead h1 abbr {
+    color: var(--text);
+}
+.innerhead ul {
+    display: none;
+}
+
+/* Utility bar */
+.utility {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 10px 20px 18px;
+    text-align: right;
+    font-size: 13px;
+    color: var(--muted);
+}
+.utility li {
+    display: inline;
+    margin: 0 0 0 8px;
+}
+.utility select {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 7px 12px;
+    outline: none;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.utility select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--ring);
+}
+
+/* Config panel */
+.config {
+    padding: 14px 0 0;
+}
+.innerconfig {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 18px 20px 10px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+h2 {
+    font-size: 18px;
+    margin: 0 0 12px;
+    color: #f0f6fc;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+h2 span {
+    background: rgba(95, 180, 255, 0.15);
+    color: #bfe3ff;
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.config a {
+    color: var(--accent);
+}
+
+/* Definition list */
+dl {
+    margin: 0;
+    padding: 0;
+}
+
+dt {
+    width: 220px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    float: left;
+    clear: both;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(180deg, var(--panel-3), var(--panel-2));
+    color: #e6edf3;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+dd {
+    margin: 0 0 0 240px;
+    padding: 10px 8px;
+    overflow: auto;
+    color: var(--text);
+}
+dd ul {
+    margin-top: 6px;
+}
+
+dd ul li {
+    float: left;
+    display: block;
+    width: 18%;
+    min-width: 160px;
+    margin: 0 0 8px 0;
+    padding: 0 0 0 12px;
+    line-height: 1.6;
+    color: var(--muted);
+    border-left: 3px solid var(--border);
+    border-radius: 2px;
+}
+
+dd ul li:nth-child(4n + 1) {
+    border-left-color: var(--accent);
+}
+dd ul li:nth-child(4n + 2) {
+    border-left-color: var(--accent-2);
+}
+dd ul li:nth-child(4n + 3) {
+    border-left-color: var(--accent-3);
+}
+dd ul li:nth-child(4n + 4) {
+    border-left-color: var(--accent-4);
+}
+
+/* Main sections */
+.divider1,
+.divider2 {
+    height: 16px;
+}
+
+.alltools {
+    padding: 8px 0 24px;
+}
+.inneralltools {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.column {
+    display: inline-block;
+    vertical-align: top;
+    min-width: 260px;
+    padding: 10px 12px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    margin: 8px 6px;
+}
+.three-columns .column {
+    width: 31.5%;
+}
+.four-columns .column {
+    width: 23.5%;
+}
+
+.column > h2 {
+    margin: 4px 0 10px;
+}
+
+/* Lists */
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.aliases,
+ul.projects,
+ul.tools,
+ul.vhost {
+    line-height: 30px;
+}
+
+ul.aliases a,
+ul.projects a,
+ul.vhost a {
+    display: inline-block;
+    padding: 6px 4px 6px 12px;
+    border-left: 3px solid var(--border);
+    border-radius: 4px;
+    transition: background 0.15s ease, border-color 0.15s ease,
+        transform 0.06s ease;
+}
+ul.aliases a:hover,
+ul.projects a:hover,
+ul.vhost a:hover {
+    background: rgba(255, 255, 255, 0.04);
+    transform: translateX(1px);
+}
+ul.aliases a:focus,
+ul.projects a:focus,
+ul.vhost a:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--ring);
+}
+
+ul.aliases li:nth-child(4n + 1) a,
+ul.projects li:nth-child(4n + 1) a,
+ul.vhost li:nth-child(4n + 1) a {
+    border-left-color: var(--accent);
+}
+ul.aliases li:nth-child(4n + 2) a,
+ul.projects li:nth-child(4n + 2) a,
+ul.vhost li:nth-child(4n + 2) a {
+    border-left-color: var(--accent-2);
+}
+ul.aliases li:nth-child(4n + 3) a,
+ul.projects li:nth-child(4n + 3) a,
+ul.vhost li:nth-child(4n + 3) a {
+    border-left-color: var(--accent-3);
+}
+ul.aliases li:nth-child(4n + 4) a,
+ul.projects li:nth-child(4n + 4) a,
+ul.vhost li:nth-child(4n + 4) a {
+    border-left-color: var(--accent-4);
+}
+
+/* Tools -> pill buttons */
+ul.tools a {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    color: var(--text);
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    transition: transform 0.06s ease, box-shadow 0.15s ease,
+        border-color 0.15s ease, background 0.15s ease;
+}
+ul.tools a:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+    border-color: var(--accent);
+}
+ul.tools a:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--ring);
+    border-color: var(--accent);
+}
+
+li.projectsdir,
+li.phpmynot {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    padding-right: 10px;
+}
+li.phpmynot {
+    color: #ff6b6b;
+    padding-left: 10px;
+    border-left: 2px solid #ff6b6b;
+}
+
+/* Footer */
+#foot {
+    margin: 14px 0 42px;
+    padding: 18px 0 0;
+    text-align: center;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+}
+#foot a {
+    color: var(--accent);
+}
+
+/* Code blocks */
+pre {
+    white-space: pre-wrap;
+    overflow-x: auto;
+    font-size: 1.16em;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: var(--shadow);
+}
+
+/* Modals */
+.modalOto .modalOtoBar,
+.modalOtoArial .modalOtoBar {
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+.modalOto .modalOtoBar input,
+.modalOtoArial .modalOtoBar input {
+    background: var(--panel-3);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+.modalOto > div,
+.modalOtoArial > div {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+.closeOto {
+    background: var(--panel-2);
+    color: var(--accent);
+    border-radius: 4px;
+}
+.closeOto:hover {
+    background: var(--panel-3);
+}
+
+/* Focus */
+a:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--ring);
+    border-radius: 6px;
+}
+
+/* Responsive */
+@media screen and (max-width: 980px) {
+    .three-columns .column,
+    .four-columns .column {
+        width: 48%;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .innerhead {
+        padding: 0 16px;
+    }
+
+    dt {
+        float: none;
+        width: 100%;
+        border-radius: 10px;
+        text-align: left;
+        padding-left: 12px;
+    }
+    dd {
+        margin: 0;
+        padding: 10px 6px 14px;
+    }
+    dd ul li {
+        width: 100%;
+    }
+
+    .three-columns .column,
+    .four-columns .column {
+        width: 100%;
+        margin: 8px 0;
+    }
 }
 
 html,
