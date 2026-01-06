@@ -1308,8 +1308,8 @@ a:hover {
 				h1.appendChild(span);
 			}
 			
-			const allowed = {'Modern Dark': 1, 'github-theme': 1, 'github-theme-dark': 1};
-			if (allowed[themeName]) {
+			const allowedThemes = new Set(['Modern Dark', 'github-theme', 'github-theme-dark']);
+			if (allowedThemes.has(themeName)) {
 				span.innerHTML = ' - ' + themeName + ' by <a href="https://github.com/scorpion7slayer" target="_blank" rel="noopener noreferrer">scorpion7slayer</a>';
 				span.style.display = '';
 			} else {
@@ -1330,7 +1330,8 @@ a:hover {
 			const text = target.innerText || target.textContent || '';
 			
 			try {
-				if (navigator.clipboard && navigator.clipboard.writeText) {
+				// Check for clipboard API availability (requires secure context in modern browsers)
+				if (navigator.clipboard && navigator.clipboard.writeText && (window.isSecureContext || window.location.protocol === 'file:')) {
 					await navigator.clipboard.writeText(text);
 					const old = this.textContent;
 					this.textContent = tr.copied;
@@ -1363,8 +1364,10 @@ a:hover {
 		// GitHub buttons
 		function openGitHub(path) {
 			const repo = document.getElementById('wmp-gh-repo').value.trim();
-			// Strict validation: owner (alphanumeric, hyphens, max 39 chars) / repo (alphanumeric, hyphens, underscores, dots)
-			if (!/^[a-zA-Z0-9][-a-zA-Z0-9]{0,38}\/[a-zA-Z0-9._-]+$/.test(repo)) {
+			// Validation following GitHub naming rules:
+			// - Owner: starts with alphanumeric, can contain hyphens, max 39 chars
+			// - Repo: can contain alphanumeric, hyphens, underscores, dots, max 100 chars
+			if (!/^[a-zA-Z0-9][-a-zA-Z0-9]{0,38}\/[a-zA-Z0-9._-]{1,100}$/.test(repo)) {
 				alert('Expected format: owner/repo');
 				return;
 			}
@@ -1414,7 +1417,8 @@ a:hover {
 			const text = content.innerText || content.textContent || '';
 			
 			try {
-				if (navigator.clipboard && navigator.clipboard.writeText) {
+				// Check for clipboard API availability (requires secure context in modern browsers)
+				if (navigator.clipboard && navigator.clipboard.writeText && (window.isSecureContext || window.location.protocol === 'file:')) {
 					navigator.clipboard.writeText(text);
 				} else {
 					// Fallback for older browsers (with feature detection)
@@ -1438,7 +1442,7 @@ a:hover {
 		}
 
 		// Keyboard shortcuts
-		const DOUBLE_KEY_TIMEOUT_MS = 350; // Time window for detecting double key press (gg)
+		const GG_SHORTCUT_TIMEOUT_MS = 350; // Time window for detecting 'gg' double keypress to scroll to top
 		
 		document.addEventListener('keydown', function(e) {
 			const tag = (e.target && e.target.tagName) || '';
@@ -1449,7 +1453,7 @@ a:hover {
 				if (e.key.toLowerCase() === 'g') {
 					if (!window.lastG) window.lastG = 0;
 					const now = Date.now();
-					if (now - window.lastG < DOUBLE_KEY_TIMEOUT_MS) {
+					if (now - window.lastG < GG_SHORTCUT_TIMEOUT_MS) {
 						window.scrollTo({top: 0, behavior: 'smooth'});
 					}
 					window.lastG = now;
