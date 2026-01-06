@@ -55,7 +55,7 @@ C:\wamp64\www\
 -   🎨 **3 modern themes** with professional design
 -   🌐 **Internationalization** - Full English and French support
 -   📱 **Enhanced responsive design** - Optimized for all screen sizes with 6 breakpoints
--   📱 **Touch-optimized** - 44px minimum touch targets for mobile devices
+-   📱 **Touch-optimized** - 44px minimum touch targets for mobile devices (you never know)
 -   🐙 **GitHub integration** - Automatic Git repository detection
 -   ⌨️ **Keyboard shortcuts** for quick navigation
 -   🛠️ **Productivity tools** - Config copy (with browser fallback), GitHub links
