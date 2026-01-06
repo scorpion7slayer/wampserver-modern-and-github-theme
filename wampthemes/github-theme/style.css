@@ -395,7 +395,7 @@ select:focus {
     outline-offset: 2px;
 }
 
-/* Responsive Design */
+/* Responsive Design - Enhanced */
 @media screen and (max-width: 1200px) {
     .innerhead,
     .innerconfig,
@@ -448,6 +448,21 @@ select:focus {
     }
 }
 
+@media screen and (max-width: 900px) {
+    dt {
+        float: none;
+        width: 100%;
+        text-align: left;
+        padding-left: 12px;
+        margin-bottom: 6px;
+    }
+    
+    dd {
+        margin: 0 0 12px 0;
+        padding: 10px 12px;
+    }
+}
+
 @media screen and (max-width: 750px) {
     body {
         font-size: 13px;
@@ -465,12 +480,14 @@ select:focus {
     
     .utility li {
         display: block;
-        margin: 4px 0;
+        margin: 4px auto;
     }
     
     .utility select {
         width: 100%;
         max-width: 280px;
+        font-size: 14px;
+        padding: 8px 12px;
     }
     
     .innerconfig {
@@ -478,10 +495,10 @@ select:focus {
     }
     
     dt {
-        float: none;
-        width: 100%;
-        text-align: left;
-        padding-left: 12px;
+        height: auto;
+        min-height: 32px;
+        line-height: 1.4;
+        padding: 8px 12px;
         margin-bottom: 4px;
     }
     
@@ -520,10 +537,15 @@ select:focus {
         margin: 4px 2px;
         font-size: 13px;
         padding: 8px 14px;
+        touch-action: manipulation;
     }
 }
 
 @media screen and (max-width: 480px) {
+    .innerhead {
+        padding: 10px 12px;
+    }
+    
     .innerhead h1 {
         font-size: 16px;
     }
@@ -539,12 +561,32 @@ select:focus {
     
     dt {
         font-size: 12px;
-        height: auto;
-        line-height: 1.4;
-        padding: 8px 10px;
+        padding: 7px 10px;
     }
     
     dd {
         font-size: 12px;
+    }
+    
+    .utility select {
+        font-size: 13px;
+        padding: 7px 10px;
+    }
+}
+
+/* Touch optimization for mobile devices */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase touch targets for better mobile UX */
+    ul.aliases a,
+    ul.projects a,
+    ul.vhost a,
+    ul.tools a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .utility select {
+        min-height: 44px;
     }
 }
