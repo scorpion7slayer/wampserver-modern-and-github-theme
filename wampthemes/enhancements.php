@@ -20,36 +20,85 @@ if ($__wmp_hasGit && is_file($__wmp_root . DIRECTORY_SEPARATOR . '.git' . DIRECT
     }
   }
 }
-$__wmp_gitBootstrap = '<script>window.WMP_GIT = { hasGit: ' . ($__wmp_hasGit ? 'true' : 'false') . ', repo: ' . json_encode($__wmp_repoSlug, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) . ' };</script>';
+
+// Translations for WMP Enhancements
+// The $langue variable is available from index.php (e.g., 'english', 'french')
+$__wmp_translations = array(
+  'english' => array(
+    'copyConfig' => 'Copy config',
+    'copied' => 'Copied!',
+    'copyFailed' => 'Copy failed',
+    'repoPlaceholder' => 'owner/repo',
+    'open' => 'Open',
+    'issues' => 'Issues',
+    'pulls' => 'Pulls',
+    'formatExpected' => 'Expected format: owner/repo',
+    'backToTop' => 'Back to top',
+    'openNewTab' => 'Open in new tab',
+    'openSameTab' => 'Open in same tab'
+  ),
+  'french' => array(
+    'copyConfig' => 'Copier config',
+    'copied' => 'Copié!',
+    'copyFailed' => 'Copie impossible',
+    'repoPlaceholder' => 'owner/repo',
+    'open' => 'Ouvrir',
+    'issues' => 'Issues',
+    'pulls' => 'Pulls',
+    'formatExpected' => 'Format attendu: owner/repo',
+    'backToTop' => 'En haut',
+    'openNewTab' => 'Ouvrir dans nouvel onglet',
+    'openSameTab' => 'Ouvrir dans même onglet'
+  )
+);
+
+// Select appropriate translations based on $langue variable
+// Default to English if language not found
+$__wmp_currentLang = isset($langue) ? $langue : 'english';
+$__wmp_tr = isset($__wmp_translations[$__wmp_currentLang]) ? $__wmp_translations[$__wmp_currentLang] : $__wmp_translations['english'];
+
+$__wmp_gitBootstrap = '<script>window.WMP_GIT = { hasGit: ' . ($__wmp_hasGit ? 'true' : 'false') . ', repo: ' . json_encode($__wmp_repoSlug, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) . ' }; window.WMP_TR = ' . json_encode($__wmp_tr, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) . ';</script>';
 
 $pageContents .= <<<EOCSSJS
 {$__wmp_gitBootstrap}
-<!-- WMP Enhancements v1.2 - Responsive improvements -->
+<!-- WMP Enhancements v1.3 - Responsive improvements & i18n support -->
 <style>
   .list-tools{display:flex;gap:8px;align-items:center;margin:6px 0 8px;flex-wrap:wrap}
-  .wmp-btn{padding:6px 10px;border:1px solid #d0d7de;background:#f6f8fa;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.15s ease}
+  .wmp-btn{padding:6px 10px;border:1px solid #d0d7de;background:#f6f8fa;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.15s ease;font-family:inherit}
   .wmp-btn:hover{filter:brightness(0.98);transform:translateY(-1px)}
   .wmp-btn:active{transform:translateY(0)}
   .wmp-floating{position:fixed;right:14px;bottom:14px;display:flex;flex-direction:column;gap:8px;z-index:9999}
   .wmp-floating .wmp-btn{box-shadow:0 8px 24px rgba(140,149,159,0.2)}
   .wmp-globalbar{max-width:1120px;margin:8px auto 6px;padding:6px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-  .wmp-field{padding:6px 8px;border:1px solid #d0d7de;border-radius:6px;background:#fff;min-width:140px;font-size:13px}
+  .wmp-field{padding:6px 8px;border:1px solid #d0d7de;border-radius:6px;background:#fff;min-width:140px;font-size:13px;font-family:inherit}
   .wmp-sep{flex:0 0 1px;height:24px;background:#d0d7de;margin:0 4px}
   
   /* Responsive enhancements */
+  @media screen and (max-width: 980px) {
+    .wmp-globalbar{padding:6px 16px;gap:6px}
+    .wmp-field{min-width:120px}
+  }
+  
   @media screen and (max-width: 750px) {
     .wmp-globalbar{padding:6px 12px;gap:6px}
     .wmp-field{min-width:100px;flex:1;font-size:12px}
     .wmp-btn{padding:8px 12px;font-size:12px;flex:1 1 auto}
     .wmp-floating{right:10px;bottom:10px;gap:6px}
-    .wmp-floating .wmp-btn{font-size:11px;padding:6px 8px}
+    .wmp-floating .wmp-btn{font-size:12px;padding:8px 10px}
   }
   
   @media screen and (max-width: 480px) {
-    .wmp-globalbar{flex-direction:column;align-items:stretch}
-    .wmp-field{width:100%}
-    .wmp-btn{width:100%;justify-content:center}
+    .wmp-globalbar{flex-direction:column;align-items:stretch;padding:8px 12px}
+    .wmp-field{width:100%;min-width:0;font-size:13px;padding:8px 10px}
+    .wmp-btn{width:100%;justify-content:center;font-size:13px;padding:10px 14px}
     .wmp-floating{right:8px;bottom:8px}
+    .wmp-floating .wmp-btn{font-size:11px;padding:7px 9px}
+  }
+  
+  /* Touch optimization */
+  @media (hover: none) and (pointer: coarse) {
+    .wmp-btn{min-height:44px;display:flex;align-items:center;justify-content:center}
+    .wmp-field{min-height:44px}
   }
   
   @media (prefers-color-scheme: dark){
@@ -79,6 +128,21 @@ $pageContents .= <<<EOCSSJS
 </style>
 <script>
 (function(){
+  // Get translations from window.WMP_TR or fall back to English defaults
+  const tr = window.WMP_TR || {
+    copyConfig: 'Copy config',
+    copied: 'Copied!',
+    copyFailed: 'Copy failed',
+    repoPlaceholder: 'owner/repo',
+    open: 'Open',
+    issues: 'Issues',
+    pulls: 'Pulls',
+    formatExpected: 'Expected format: owner/repo',
+    backToTop: 'Back to top',
+    openNewTab: 'Open in new tab',
+    openSameTab: 'Open in same tab'
+  };
+
   function persistCollapsed(titleEl, collapsed){ 
     const key = (titleEl.textContent||'').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
     localStorage.setItem('wmp_collapse_'+key, collapsed ? '1':'0'); 
@@ -90,16 +154,45 @@ $pageContents .= <<<EOCSSJS
     const h2 = cfg.querySelector('h2');
     const target = cfg.querySelector('dl');
     if(!h2 || !target) return;
+    
+    // Prevent duplicate buttons
+    if(h2.nextElementSibling && h2.nextElementSibling.classList && h2.nextElementSibling.classList.contains('wmp-btn')) return;
+    
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'wmp-btn';
     btn.style.float = 'right';
-    btn.textContent = 'Copier config';
+    btn.textContent = tr.copyConfig;
     btn.addEventListener('click', async ()=>{
       try{
-        await navigator.clipboard.writeText(target.innerText || target.textContent || '');
-        const old = btn.textContent; btn.textContent = 'Copie!'; setTimeout(()=>btn.textContent=old, 1500);
-      }catch(e){ alert('Copie impossible'); }
+        const text = target.innerText || target.textContent || '';
+        if(!text.trim()){ alert(tr.copyFailed); return; }
+        
+        // Modern browsers
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent; btn.textContent = tr.copied; setTimeout(()=>btn.textContent=old, 1500);
+        }
+        // Fallback for older browsers
+        else{
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          try{
+            document.execCommand('copy');
+            const old = btn.textContent; btn.textContent = tr.copied; setTimeout(()=>btn.textContent=old, 1500);
+          }catch(err){
+            alert(tr.copyFailed);
+          }
+          document.body.removeChild(textarea);
+        }
+      }catch(e){ 
+        console.error('Copy failed:', e);
+        alert(tr.copyFailed); 
+      }
     });
     h2.after(btn);
   }
@@ -113,10 +206,10 @@ $pageContents .= <<<EOCSSJS
     const bar = document.createElement('div');
     bar.className = 'wmp-globalbar';
     const parts = [
-      '<input id="wmp-gh-repo" class="wmp-field" type="text" placeholder="owner/repo" />',
-      '<button id="wmp-gh-open" class="wmp-btn" type="button">Ouvrir</button>',
-      '<button id="wmp-gh-issues" class="wmp-btn" type="button">Issues</button>',
-      '<button id="wmp-gh-pulls" class="wmp-btn" type="button">Pulls</button>'
+      '<input id="wmp-gh-repo" class="wmp-field" type="text" placeholder="' + tr.repoPlaceholder + '" />',
+      '<button id="wmp-gh-open" class="wmp-btn" type="button">' + tr.open + '</button>',
+      '<button id="wmp-gh-issues" class="wmp-btn" type="button">' + tr.issues + '</button>',
+      '<button id="wmp-gh-pulls" class="wmp-btn" type="button">' + tr.pulls + '</button>'
     ];
     bar.innerHTML = parts.join('');
     util.after(bar);
@@ -133,9 +226,9 @@ $pageContents .= <<<EOCSSJS
     const btnIssues = bar.querySelector('#wmp-gh-issues');
     const btnPulls = bar.querySelector('#wmp-gh-pulls');
     const repoPattern = /^[^/\s]+\/[\w.-]+$/;
-    if(btnOpen) btnOpen.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert('Format attendu: owner/repo'); openUrl('https://github.com/'+v); });
-    if(btnIssues) btnIssues.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert('Format attendu: owner/repo'); openUrl('https://github.com/'+v+'/issues'); });
-    if(btnPulls) btnPulls.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert('Format attendu: owner/repo'); openUrl('https://github.com/'+v+'/pulls'); });
+    if(btnOpen) btnOpen.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert(tr.formatExpected); openUrl('https://github.com/'+v); });
+    if(btnIssues) btnIssues.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert(tr.formatExpected); openUrl('https://github.com/'+v+'/issues'); });
+    if(btnPulls) btnPulls.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert(tr.formatExpected); openUrl('https://github.com/'+v+'/pulls'); });
 
     // keyboard shortcuts
     document.addEventListener('keydown', (e)=>{
@@ -154,8 +247,8 @@ $pageContents .= <<<EOCSSJS
   function addFloatingTools(){
     const wrap = document.createElement('div');
     wrap.className = 'wmp-floating';
-    const btnTop = document.createElement('button'); btnTop.className='wmp-btn'; btnTop.textContent='En haut';
-    const btnNewTab = document.createElement('button'); btnNewTab.className='wmp-btn'; btnNewTab.textContent='Ouvrir dans nouvel onglet';
+    const btnTop = document.createElement('button'); btnTop.className='wmp-btn'; btnTop.textContent=tr.backToTop;
+    const btnNewTab = document.createElement('button'); btnNewTab.className='wmp-btn'; btnNewTab.textContent=tr.openNewTab;
     wrap.append(btnTop, btnNewTab);
     document.body.appendChild(wrap);
 
@@ -165,7 +258,7 @@ $pageContents .= <<<EOCSSJS
         if(on){ a.setAttribute('target','_blank'); a.setAttribute('rel','noreferrer noopener'); }
         else { a.removeAttribute('target'); a.removeAttribute('rel'); }
       });
-      btnNewTab.textContent = on ? 'Ouvrir dans meme onglet' : 'Ouvrir dans nouvel onglet';
+      btnNewTab.textContent = on ? tr.openSameTab : tr.openNewTab;
     };
 
     btnTop.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
