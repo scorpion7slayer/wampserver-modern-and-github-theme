@@ -1336,17 +1336,24 @@ a:hover {
 					this.textContent = tr.copied;
 					setTimeout(() => this.textContent = old, 1500);
 				} else {
+					// Fallback for older browsers (with feature detection)
 					const textarea = document.createElement('textarea');
 					textarea.value = text;
 					textarea.style.position = 'fixed';
 					textarea.style.opacity = '0';
 					document.body.appendChild(textarea);
 					textarea.select();
-					document.execCommand('copy');
-					document.body.removeChild(textarea);
-					const old = this.textContent;
-					this.textContent = tr.copied;
-					setTimeout(() => this.textContent = old, 1500);
+					try {
+						const success = document.execCommand('copy');
+						if (!success) throw new Error('execCommand failed');
+						document.body.removeChild(textarea);
+						const old = this.textContent;
+						this.textContent = tr.copied;
+						setTimeout(() => this.textContent = old, 1500);
+					} catch(err) {
+						document.body.removeChild(textarea);
+						alert(tr.copyFailed + ' - Clipboard not supported');
+					}
 				}
 			} catch(e) {
 				alert(tr.copyFailed);
@@ -1356,11 +1363,12 @@ a:hover {
 		// GitHub buttons
 		function openGitHub(path) {
 			const repo = document.getElementById('wmp-gh-repo').value.trim();
-			if (!/^[^/\s]+\/[\w.-]+$/.test(repo)) {
+			// Strict validation: owner (alphanumeric, hyphens, max 39 chars) / repo (alphanumeric, hyphens, underscores, dots)
+			if (!/^[a-zA-Z0-9][-a-zA-Z0-9]{0,38}\/[a-zA-Z0-9._-]+$/.test(repo)) {
 				alert('Expected format: owner/repo');
 				return;
 			}
-			const url = 'https://github.com/' + repo + path;
+			const url = 'https://github.com/' + encodeURIComponent(repo.split('/')[0]) + '/' + encodeURIComponent(repo.split('/')[1]) + path;
 			const newTab = localStorage.getItem('wmp_open_new_tab') === '1';
 			if (newTab) {
 				window.open(url, '_blank', 'noopener');
@@ -1408,13 +1416,19 @@ a:hover {
 				if (navigator.clipboard && navigator.clipboard.writeText) {
 					navigator.clipboard.writeText(text);
 				} else {
+					// Fallback for older browsers (with feature detection)
 					const textarea = document.createElement('textarea');
 					textarea.value = text;
 					textarea.style.position = 'fixed';
 					textarea.style.opacity = '0';
 					document.body.appendChild(textarea);
 					textarea.select();
-					document.execCommand('copy');
+					try {
+						const success = document.execCommand('copy');
+						if (!success) throw new Error('execCommand failed');
+					} catch(err) {
+						console.error('Copy failed - clipboard not supported:', err);
+					}
 					document.body.removeChild(textarea);
 				}
 			} catch(e) {
@@ -1423,6 +1437,8 @@ a:hover {
 		}
 
 		// Keyboard shortcuts
+		const DOUBLE_KEY_TIMEOUT_MS = 350; // Time window for detecting double key press (gg)
+		
 		document.addEventListener('keydown', function(e) {
 			const tag = (e.target && e.target.tagName) || '';
 			const typing = tag === 'INPUT' || tag === 'TEXTAREA' || e.isComposing;
@@ -1432,7 +1448,7 @@ a:hover {
 				if (e.key.toLowerCase() === 'g') {
 					if (!window.lastG) window.lastG = 0;
 					const now = Date.now();
-					if (now - window.lastG < 350) {
+					if (now - window.lastG < DOUBLE_KEY_TIMEOUT_MS) {
 						window.scrollTo({top: 0, behavior: 'smooth'});
 					}
 					window.lastG = now;
