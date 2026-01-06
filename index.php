@@ -517,6 +517,9 @@ if ($VirtualHostMenu == "on") {
 }
 //End retrieving ServerName from httpd-vhosts.conf
 
+// Include Git detection
+require 'wampthemes/git-detection.php';
+
 // Project recovery
 $list_projects = array();
 $handle = opendir(".");
@@ -525,13 +528,33 @@ while (false !== ($file = readdir($handle))) {
 		$list_projects[] = $file;
 }
 closedir($handle);
+
+// Scanner les projets Git
+$gitProjects = scanAllProjectsGit($list_projects);
+
 $projectContents = '';
 if (count($list_projects) > 0) {
 	if ($wampConf['LinksOnProjectsHomePage'] == 'on') {
 		$projectContents .= "<li class='projectsdir'>http://localhost/project/</li>\n";
 	}
 	foreach ($list_projects as $file) {
-		$projectContents .= ($wampConf['LinksOnProjectsHomePage'] == 'on') ? "<li><a href='http://localhost/" . $file . "/'>" . $file . "</a></li>" : '<li>' . $file . '</li>';
+		// Générer le lien du projet
+		$projectLink = ($wampConf['LinksOnProjectsHomePage'] == 'on') 
+			? "<a href='http://localhost/" . $file . "/'>" . $file . "</a>" 
+			: $file;
+		
+		// Ajouter les informations Git si disponibles
+		$gitInfo = '';
+		if (isset($gitProjects[$file])) {
+			$git = $gitProjects[$file];
+			$gitInfo = "<div class='project-git-info' data-owner='" . htmlspecialchars($git['owner'], ENT_QUOTES, 'UTF-8') . "' data-repo='" . htmlspecialchars($git['repo'], ENT_QUOTES, 'UTF-8') . "'>";
+			$gitInfo .= "<p class='git-link'><small>📦 <a href='" . htmlspecialchars($git['url'], ENT_QUOTES, 'UTF-8') . "' target='_blank' rel='noopener'>" . htmlspecialchars($git['slug'], ENT_QUOTES, 'UTF-8') . "</a></small></p>";
+			$gitInfo .= "<div class='github-integration' id='gh-" . htmlspecialchars($file, ENT_QUOTES, 'UTF-8') . "'></div>";
+			$gitInfo .= "</div>";
+			$nbProjectsLines += 2; // Pour le scroll
+		}
+		
+		$projectContents .= "<li>" . $projectLink . $gitInfo . "</li>";
 		$nbProjects++;
 		$nbProjectsLines++;
 	}
@@ -688,6 +711,7 @@ $pageContents .= <<< EOPAGEC
 EOPAGEC;
 include 'wampthemes/select_themes.php';
 include 'wampthemes/enhancements.php';
+include 'wampthemes/github-integration.php';
 include 'wampthemes/copy_modal.php';
 $pageContents .= <<< EOPAGED
 </body>
