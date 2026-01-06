@@ -252,9 +252,10 @@ $pageContents .= <<<'EOGITJS'
     };
     
     // Detect language from page
-    const currentLang = document.documentElement.lang || 
+    const detectedLang = document.documentElement.lang || 
                         (navigator.language.startsWith('fr') ? 'fr' : 'en');
-    const lang = translations[currentLang] || translations.en;
+    const currentLang = translations[detectedLang] ? detectedLang : 'en';
+    const lang = translations[currentLang];
     
     function getCacheKey(owner, repo, endpoint) {
         return `gh_${owner}_${repo}_${endpoint}`;
@@ -470,7 +471,7 @@ $pageContents .= <<<'EOGITJS'
         element.innerHTML = `<div class="loading">${lang.loading}</div>`;
         
         try {
-            // Charger les données
+            // Load GitHub data
             const [repoData, commits, branches, pulls, issues] = await Promise.all([
                 fetchGitHubAPI(owner, repo, ''),
                 fetchGitHubAPI(owner, repo, '/commits'),
@@ -481,7 +482,7 @@ $pageContents .= <<<'EOGITJS'
             
             element.classList.remove('loading');
             
-            // Créer l'interface
+            // Create interface
             element.innerHTML = `
                 <div id="repo-info-${repo}"></div>
                 <div class="github-tabs">
@@ -496,14 +497,14 @@ $pageContents .= <<<'EOGITJS'
                 <div class="github-content" data-content="issues" id="issues-${repo}"></div>
             `;
             
-            // Rendre les données
+            // Render data
             renderRepoInfo(element.querySelector(`#repo-info-${repo}`), repoData);
             renderCommits(element.querySelector(`#commits-${repo}`), commits);
             renderBranches(element.querySelector(`#branches-${repo}`), branches);
             renderPRs(element.querySelector(`#pulls-${repo}`), pulls);
             renderIssues(element.querySelector(`#issues-${repo}`), issues);
             
-            // Gérer les onglets
+            // Handle tabs
             element.querySelectorAll('.github-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     element.querySelectorAll('.github-tab').forEach(t => t.classList.remove('active'));
