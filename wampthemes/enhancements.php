@@ -20,7 +20,44 @@ if ($__wmp_hasGit && is_file($__wmp_root . DIRECTORY_SEPARATOR . '.git' . DIRECT
     }
   }
 }
-$__wmp_gitBootstrap = '<script>window.WMP_GIT = { hasGit: ' . ($__wmp_hasGit ? 'true' : 'false') . ', repo: ' . json_encode($__wmp_repoSlug, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) . ' };</script>';
+
+// Translations for WMP Enhancements
+// The $langue variable is available from index.php (e.g., 'english', 'french')
+$__wmp_translations = array(
+  'english' => array(
+    'copyConfig' => 'Copy config',
+    'copied' => 'Copied!',
+    'copyFailed' => 'Copy failed',
+    'repoPlaceholder' => 'owner/repo',
+    'open' => 'Open',
+    'issues' => 'Issues',
+    'pulls' => 'Pulls',
+    'formatExpected' => 'Expected format: owner/repo',
+    'backToTop' => 'Back to top',
+    'openNewTab' => 'Open in new tab',
+    'openSameTab' => 'Open in same tab'
+  ),
+  'french' => array(
+    'copyConfig' => 'Copier config',
+    'copied' => 'Copie!',
+    'copyFailed' => 'Copie impossible',
+    'repoPlaceholder' => 'owner/repo',
+    'open' => 'Ouvrir',
+    'issues' => 'Issues',
+    'pulls' => 'Pulls',
+    'formatExpected' => 'Format attendu: owner/repo',
+    'backToTop' => 'En haut',
+    'openNewTab' => 'Ouvrir dans nouvel onglet',
+    'openSameTab' => 'Ouvrir dans meme onglet'
+  )
+);
+
+// Select appropriate translations based on $langue variable
+// Default to English if language not found
+$__wmp_currentLang = isset($langue) ? $langue : 'english';
+$__wmp_tr = isset($__wmp_translations[$__wmp_currentLang]) ? $__wmp_translations[$__wmp_currentLang] : $__wmp_translations['english'];
+
+$__wmp_gitBootstrap = '<script>window.WMP_GIT = { hasGit: ' . ($__wmp_hasGit ? 'true' : 'false') . ', repo: ' . json_encode($__wmp_repoSlug, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) . ' }; window.WMP_TR = ' . json_encode($__wmp_tr, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) . ';</script>';
 
 $pageContents .= <<<EOCSSJS
 {$__wmp_gitBootstrap}
@@ -79,6 +116,21 @@ $pageContents .= <<<EOCSSJS
 </style>
 <script>
 (function(){
+  // Get translations from window.WMP_TR or fall back to English defaults
+  const tr = window.WMP_TR || {
+    copyConfig: 'Copy config',
+    copied: 'Copied!',
+    copyFailed: 'Copy failed',
+    repoPlaceholder: 'owner/repo',
+    open: 'Open',
+    issues: 'Issues',
+    pulls: 'Pulls',
+    formatExpected: 'Expected format: owner/repo',
+    backToTop: 'Back to top',
+    openNewTab: 'Open in new tab',
+    openSameTab: 'Open in same tab'
+  };
+
   function persistCollapsed(titleEl, collapsed){ 
     const key = (titleEl.textContent||'').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
     localStorage.setItem('wmp_collapse_'+key, collapsed ? '1':'0'); 
@@ -94,12 +146,12 @@ $pageContents .= <<<EOCSSJS
     btn.type = 'button';
     btn.className = 'wmp-btn';
     btn.style.float = 'right';
-    btn.textContent = 'Copier config';
+    btn.textContent = tr.copyConfig;
     btn.addEventListener('click', async ()=>{
       try{
         await navigator.clipboard.writeText(target.innerText || target.textContent || '');
-        const old = btn.textContent; btn.textContent = 'Copie!'; setTimeout(()=>btn.textContent=old, 1500);
-      }catch(e){ alert('Copie impossible'); }
+        const old = btn.textContent; btn.textContent = tr.copied; setTimeout(()=>btn.textContent=old, 1500);
+      }catch(e){ alert(tr.copyFailed); }
     });
     h2.after(btn);
   }
@@ -113,10 +165,10 @@ $pageContents .= <<<EOCSSJS
     const bar = document.createElement('div');
     bar.className = 'wmp-globalbar';
     const parts = [
-      '<input id="wmp-gh-repo" class="wmp-field" type="text" placeholder="owner/repo" />',
-      '<button id="wmp-gh-open" class="wmp-btn" type="button">Ouvrir</button>',
-      '<button id="wmp-gh-issues" class="wmp-btn" type="button">Issues</button>',
-      '<button id="wmp-gh-pulls" class="wmp-btn" type="button">Pulls</button>'
+      '<input id="wmp-gh-repo" class="wmp-field" type="text" placeholder="' + tr.repoPlaceholder + '" />',
+      '<button id="wmp-gh-open" class="wmp-btn" type="button">' + tr.open + '</button>',
+      '<button id="wmp-gh-issues" class="wmp-btn" type="button">' + tr.issues + '</button>',
+      '<button id="wmp-gh-pulls" class="wmp-btn" type="button">' + tr.pulls + '</button>'
     ];
     bar.innerHTML = parts.join('');
     util.after(bar);
@@ -133,9 +185,9 @@ $pageContents .= <<<EOCSSJS
     const btnIssues = bar.querySelector('#wmp-gh-issues');
     const btnPulls = bar.querySelector('#wmp-gh-pulls');
     const repoPattern = /^[^/\s]+\/[\w.-]+$/;
-    if(btnOpen) btnOpen.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert('Format attendu: owner/repo'); openUrl('https://github.com/'+v); });
-    if(btnIssues) btnIssues.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert('Format attendu: owner/repo'); openUrl('https://github.com/'+v+'/issues'); });
-    if(btnPulls) btnPulls.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert('Format attendu: owner/repo'); openUrl('https://github.com/'+v+'/pulls'); });
+    if(btnOpen) btnOpen.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert(tr.formatExpected); openUrl('https://github.com/'+v); });
+    if(btnIssues) btnIssues.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert(tr.formatExpected); openUrl('https://github.com/'+v+'/issues'); });
+    if(btnPulls) btnPulls.addEventListener('click', ()=>{ const v=(repoInput.value||'').trim(); if(!repoPattern.test(v)) return alert(tr.formatExpected); openUrl('https://github.com/'+v+'/pulls'); });
 
     // keyboard shortcuts
     document.addEventListener('keydown', (e)=>{
@@ -154,8 +206,8 @@ $pageContents .= <<<EOCSSJS
   function addFloatingTools(){
     const wrap = document.createElement('div');
     wrap.className = 'wmp-floating';
-    const btnTop = document.createElement('button'); btnTop.className='wmp-btn'; btnTop.textContent='En haut';
-    const btnNewTab = document.createElement('button'); btnNewTab.className='wmp-btn'; btnNewTab.textContent='Ouvrir dans nouvel onglet';
+    const btnTop = document.createElement('button'); btnTop.className='wmp-btn'; btnTop.textContent=tr.backToTop;
+    const btnNewTab = document.createElement('button'); btnNewTab.className='wmp-btn'; btnNewTab.textContent=tr.openNewTab;
     wrap.append(btnTop, btnNewTab);
     document.body.appendChild(wrap);
 
@@ -165,7 +217,7 @@ $pageContents .= <<<EOCSSJS
         if(on){ a.setAttribute('target','_blank'); a.setAttribute('rel','noreferrer noopener'); }
         else { a.removeAttribute('target'); a.removeAttribute('rel'); }
       });
-      btnNewTab.textContent = on ? 'Ouvrir dans meme onglet' : 'Ouvrir dans nouvel onglet';
+      btnNewTab.textContent = on ? tr.openSameTab : tr.openNewTab;
     };
 
     btnTop.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
