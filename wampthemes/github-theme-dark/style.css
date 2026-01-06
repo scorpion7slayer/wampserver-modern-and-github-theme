@@ -3,6 +3,8 @@
 :root {
     --bg: #22272e; /* dimmed background */
     --panel: #2d333b; /* panel background */
+    --panel-2: #373e47; /* secondary panel background */
+    --panel-3: #2b3a52; /* tertiary panel background */
     --panel-subtle: #2b3036; /* subtle surfaces */
     --text: #adbac7; /* primary text */
     --muted: #768390; /* muted text */
