@@ -142,6 +142,10 @@ $pageContents .= <<<EOCSSJS
     const h2 = cfg.querySelector('h2');
     const target = cfg.querySelector('dl');
     if(!h2 || !target) return;
+    
+    // Prevent duplicate buttons
+    if(h2.nextElementSibling && h2.nextElementSibling.classList && h2.nextElementSibling.classList.contains('wmp-btn')) return;
+    
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'wmp-btn';
@@ -149,9 +153,34 @@ $pageContents .= <<<EOCSSJS
     btn.textContent = tr.copyConfig;
     btn.addEventListener('click', async ()=>{
       try{
-        await navigator.clipboard.writeText(target.innerText || target.textContent || '');
-        const old = btn.textContent; btn.textContent = tr.copied; setTimeout(()=>btn.textContent=old, 1500);
-      }catch(e){ alert(tr.copyFailed); }
+        const text = target.innerText || target.textContent || '';
+        if(!text.trim()){ alert(tr.copyFailed); return; }
+        
+        // Modern browsers
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent; btn.textContent = tr.copied; setTimeout(()=>btn.textContent=old, 1500);
+        }
+        // Fallback for older browsers
+        else{
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          try{
+            document.execCommand('copy');
+            const old = btn.textContent; btn.textContent = tr.copied; setTimeout(()=>btn.textContent=old, 1500);
+          }catch(err){
+            alert(tr.copyFailed);
+          }
+          document.body.removeChild(textarea);
+        }
+      }catch(e){ 
+        console.error('Copy failed:', e);
+        alert(tr.copyFailed); 
+      }
     });
     h2.after(btn);
   }
