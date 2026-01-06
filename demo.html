@@ -1368,7 +1368,8 @@ a:hover {
 				alert('Expected format: owner/repo');
 				return;
 			}
-			const url = 'https://github.com/' + encodeURIComponent(repo.split('/')[0]) + '/' + encodeURIComponent(repo.split('/')[1]) + path;
+			const [owner, repoName] = repo.split('/');
+			const url = 'https://github.com/' + encodeURIComponent(owner) + '/' + encodeURIComponent(repoName) + path;
 			const newTab = localStorage.getItem('wmp_open_new_tab') === '1';
 			if (newTab) {
 				window.open(url, '_blank', 'noopener');
@@ -1399,7 +1400,7 @@ a:hover {
 			document.querySelectorAll('.column a, .project-git-info a').forEach(a => {
 				if (newTab) {
 					a.setAttribute('target', '_blank');
-					a.setAttribute('rel', 'noreferrer noopener');
+					a.setAttribute('rel', 'noopener noreferrer');
 				} else {
 					a.removeAttribute('target');
 					a.removeAttribute('rel');
