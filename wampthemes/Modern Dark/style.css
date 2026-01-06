@@ -17,6 +17,13 @@
     --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
+/* Global box-sizing for consistent layouts */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 /* Base Reset */
 html,
 body {
@@ -281,6 +288,7 @@ dd ul li:nth-child(4n + 4) {
     border-radius: 14px;
     box-shadow: var(--shadow);
     margin: 8px 6px;
+    box-sizing: border-box;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .column:hover {
@@ -288,10 +296,10 @@ dd ul li:nth-child(4n + 4) {
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
 }
 .three-columns .column {
-    width: 31.5%;
+    width: calc(33.333% - 14px);
 }
 .four-columns .column {
-    width: 23.5%;
+    width: calc(25% - 14px);
 }
 
 .column > h2 {
@@ -881,4 +889,24 @@ select:focus {
         width: 100%;
         text-align: center;
     }
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--panel-2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
 }

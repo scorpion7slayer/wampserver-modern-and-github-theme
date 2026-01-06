@@ -61,8 +61,17 @@ $__wmp_gitBootstrap = '<script>window.WMP_GIT = { hasGit: ' . ($__wmp_hasGit ? '
 
 $pageContents .= <<<EOCSSJS
 {$__wmp_gitBootstrap}
-<!-- WMP Enhancements v1.3 - Responsive improvements & i18n support -->
+<!-- WMP Enhancements v1.4 - Responsive improvements, i18n support & modal fallback -->
 <style>
+  /* Fallback modal styles if popupmodal.css is missing */
+  .modalOto,.modalOtoArial{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;overflow:auto}
+  .modalOto:target,.modalOtoArial:target{display:flex;align-items:center;justify-content:center}
+  .modalOto>div,.modalOtoArial>div{position:relative;max-width:90%;max-height:90vh;overflow:auto;padding:20px;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,0.3)}
+  .modalOtoBar{display:flex;justify-content:space-between;align-items:center;padding:10px 15px;margin:-20px -20px 15px;border-radius:8px 8px 0 0}
+  .modalOtoBar input{padding:6px 12px;cursor:pointer;border-radius:4px}
+  .closeOto{display:inline-block;padding:6px 12px;text-decoration:none;font-weight:bold;border-radius:4px}
+  .closeOto:hover{opacity:0.8}
+  
   .list-tools{display:flex;gap:8px;align-items:center;margin:6px 0 8px;flex-wrap:wrap}
   .wmp-btn{padding:6px 10px;border:1px solid #d0d7de;background:#f6f8fa;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.15s ease;font-family:inherit}
   .wmp-btn:hover{filter:brightness(0.98);transform:translateY(-1px)}
