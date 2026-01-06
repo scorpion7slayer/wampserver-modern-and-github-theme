@@ -1,122 +1,70 @@
 # WampServer Modern & GitHub Themes
 
-Custom themes and enhanced UI features for WampServer homepage.
+Modern and responsive themes for WampServer homepage with GitHub integration.
 
-## 🎨 Themes
+## 🎨 Available Themes
 
-### 1. **github-theme** (Light)
+-   **github-theme** - GitHub-inspired light theme
+-   **github-theme-dark** - GitHub Dark Dimmed theme
+-   **Modern Dark** - Vibrant dark theme with multiple accent colors
 
-GitHub-inspired light theme with clean design.
-
--   **Palette**: White panels, `#0969da` accent
--   **Features**: Cards, pills, smooth transitions
-
-### 2. **github-theme-dark** (Dark Dimmed)
-
-GitHub Dark Dimmed variant for night mode.
-
--   **Palette**: `#22272e` background, `#539bf5` accent
--   **Features**: High contrast, modern cards
-
-### 3. **Modern Dark**
-
-Vibrant dark theme with multiple accent colors.
-
--   **Palette**: 4 cycling accents (blue, green, orange, pink)
--   **Features**: Colorful UI, micro-interactions
-
-## ✨ Features
-
-### 🐙 GitHub Integration
-
--   **Auto-detection**: Widget appears only when `.git` exists
--   **Quick access**: Open repo, issues, pulls with one click
--   **Auto-fill**: Reads `owner/repo` from `.git/config`
-
-### 🛠️ Productivity Tools
-
--   **Sort A→Z**: Alphabetically sort any list
--   **Export JSON**: Copy visible items as JSON
--   **Copy list**: Copy items as plain text
--   **Copy config**: One-click config copy
--   **Collapse/expand**: Per-column and global controls
-
-### ⌨️ Keyboard Shortcuts
-
-| Shortcut | Action                   |
-| -------- | ------------------------ |
-| `/`      | Focus global search      |
-| `Alt+E`  | Expand all lists         |
-| `Alt+C`  | Collapse all lists       |
-| `Alt+N`  | Toggle "open in new tab" |
-| `g g`    | Scroll to top            |
-
-### 🎯 Floating Toolbar
-
-Fixed bottom-right toolbar with:
-
--   ↑ Scroll to top
--   Toggle expand/collapse all
--   Toggle new tab behavior
-
-### 🏷️ Theme Credit
-
-Custom themes display: **"— <theme name> by [scorpion7slayer](https://github.com/scorpion7slayer)"** next to the title.
+All themes are **fully responsive** and automatically adapt to mobile, tablet, and desktop screens.
 
 ## 📦 Installation
 
-1. **Download files**:
+### Step 1: Download the files
 
-    - `index.php` (modified)
-    - `wampthemes/enhancements.php` (new)
-    - `wampthemes/github-theme/style.css` (new)
-    - `wampthemes/github-theme-dark/style.css` (new)
-    - `wampthemes/Modern Dark/style.css` (new)
+Clone or download this repository:
 
-2. **Replace/add** files in your WampServer `www` directory.
+```bash
+git clone https://github.com/scorpion7slayer/wampserver-modern-and-github-theme.git
+```
 
-3. **Select theme** from the dropdown on the homepage.
+Or download the ZIP file from GitHub.
 
-## 🔧 Technical Details
+### Step 2: Copy the files
 
-### Modified Files
+Copy the following files to your WampServer `www` directory (typically `C:\wamp64\www` or `C:\wamp\www`):
 
--   **`index.php`**: Fixed duplicate link IDs, added `enhancements.php` include
+-   `index.php` (replaces the existing file)
+-   `wampthemes/` (the complete folder with all themes)
 
-### New Files
+**Final structure:**
+```
+C:\wamp64\www\
+├── index.php
+├── wampthemes/
+│   ├── enhancements.php
+│   ├── github-theme/
+│   │   └── style.css
+│   ├── github-theme-dark/
+│   │   └── style.css
+│   └── Modern Dark/
+│       └── style.css
+└── ... (other WampServer files)
+```
 
--   **`wampthemes/enhancements.php`**: All JS/CSS enhancements
--   **Theme files**: 3 complete custom themes
+### Step 3: Select a theme
 
-### Compatibility
+1. Open your browser and go to `http://localhost`
+2. In the dropdown menu at the top right, select your preferred theme
+3. The theme will be applied immediately and saved automatically
 
--   ✅ Fully backwards compatible
--   ✅ Doesn't affect existing themes
--   ✅ Works with all WampServer versions (2.5+)
--   ✅ No dependencies
+## ✨ Features
 
-## 🖼️ Screenshots
+-   🎨 **3 modern themes** with professional design
+-   📱 **Responsive design** - adapts to all screen sizes
+-   🐙 **GitHub integration** - automatic Git repository detection
+-   ⌨️ **Keyboard shortcuts** for quick navigation
+-   🛠️ **Productivity tools** - sort, JSON export, config copy
+-   🎯 **Floating toolbar** for quick access
 
-### github-theme (Light)
+## 🔧 Compatibility
 
-Clean, professional GitHub-inspired design.
-
-### github-theme-dark (Dark Dimmed)
-
-Perfect for night coding sessions.
-
-### Modern Dark
-
-Vibrant colors with smooth animations.
-
-## 🤝 Contributing
-
-Feel free to:
-
--   Report issues
--   Suggest new features
--   Submit pull requests
--   Share your own theme variants
+-   ✅ WampServer 2.5 and higher
+-   ✅ Compatible with all existing themes
+-   ✅ No external dependencies
+-   ✅ Backward compatible
 
 ## 📝 License
 
