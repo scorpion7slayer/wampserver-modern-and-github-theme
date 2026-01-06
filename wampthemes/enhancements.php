@@ -39,7 +39,7 @@ $__wmp_translations = array(
   ),
   'french' => array(
     'copyConfig' => 'Copier config',
-    'copied' => 'Copie!',
+    'copied' => 'Copié!',
     'copyFailed' => 'Copie impossible',
     'repoPlaceholder' => 'owner/repo',
     'open' => 'Ouvrir',
@@ -48,7 +48,7 @@ $__wmp_translations = array(
     'formatExpected' => 'Format attendu: owner/repo',
     'backToTop' => 'En haut',
     'openNewTab' => 'Ouvrir dans nouvel onglet',
-    'openSameTab' => 'Ouvrir dans meme onglet'
+    'openSameTab' => 'Ouvrir dans même onglet'
   )
 );
 
