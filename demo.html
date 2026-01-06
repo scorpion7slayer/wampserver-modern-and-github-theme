@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>WampServer - DEMO PAGE / PAGE DE DÉMONSTRATION</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width">
+	<link rel="shortcut icon" href="favicon.ico" type="image/ico" />
+	<style id="theme-styles">
+		/* Theme styles will be dynamically loaded here */
+	</style>
+	<style>
+		/* Modal styles */
+		.modalOto,.modalOtoArial{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;overflow:auto}
+		.modalOto:target,.modalOtoArial:target{display:flex;align-items:center;justify-content:center}
+		.modalOto>div,.modalOtoArial>div{position:relative;max-width:90%;max-height:90vh;overflow:auto;padding:20px;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,0.3);background:#fff}
+		.modalOtoBar{display:flex;justify-content:space-between;align-items:center;padding:10px 15px;margin:-20px -20px 15px;border-radius:8px 8px 0 0;background:#f6f8fa;border-bottom:1px solid #d0d7de}
+		.modalOtoBar input{padding:6px 12px;cursor:pointer;border-radius:4px;border:1px solid #d0d7de;background:#fff}
+		.closeOto{display:inline-block;padding:6px 12px;text-decoration:none;font-weight:bold;border-radius:4px;color:#cf222e}
+		.closeOto:hover{opacity:0.8;background:rgba(207,34,46,0.1)}
+
+		/* Enhancement styles */
+		.list-tools{display:flex;gap:8px;align-items:center;margin:6px 0 8px;flex-wrap:wrap}
+		.wmp-btn{padding:6px 10px;border:1px solid #d0d7de;background:#f6f8fa;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.15s ease;font-family:inherit}
+		.wmp-btn:hover{filter:brightness(0.98);transform:translateY(-1px)}
+		.wmp-btn:active{transform:translateY(0)}
+		.wmp-floating{position:fixed;right:14px;bottom:14px;display:flex;flex-direction:column;gap:8px;z-index:9999}
+		.wmp-floating .wmp-btn{box-shadow:0 8px 24px rgba(140,149,159,0.2)}
+		.wmp-globalbar{max-width:1120px;margin:8px auto 6px;padding:6px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+		.wmp-field{padding:6px 8px;border:1px solid #d0d7de;border-radius:6px;background:#fff;min-width:140px;font-size:13px;font-family:inherit}
+		.wmp-sep{flex:0 0 1px;height:24px;background:#d0d7de;margin:0 4px}
+
+		/* Demo notice banner */
+		.demo-notice {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			padding: 12px 20px;
+			text-align: center;
+			font-size: 14px;
+			font-weight: 500;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+			position: relative;
+			z-index: 100;
+		}
+		.demo-notice strong {
+			font-weight: 700;
+		}
+		.demo-notice a {
+			color: white;
+			text-decoration: underline;
+			font-weight: 600;
+		}
+		.demo-notice a:hover {
+			opacity: 0.8;
+		}
+
+		/* GitHub Integration Styles */
+		.project-git-info {
+			margin-top: 8px;
+		}
+		.git-link {
+			margin: 4px 0 8px 0;
+		}
+		.git-link a {
+			color: var(--accent, #5fb4ff);
+			text-decoration: none;
+		}
+
+		/* Theme credit */
+		#head .innerhead .wmp-theme-credit{margin-left:10px;font-size:.9rem;color:#57606a;white-space:nowrap}
+		#head .innerhead .wmp-theme-credit a{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor;transition:all .2s}
+		#head .innerhead .wmp-theme-credit a:hover{color:#0969da;border-bottom-style:solid}
+
+		/* Responsive enhancements */
+		@media screen and (max-width: 980px) {
+			.wmp-globalbar{padding:6px 16px;gap:6px}
+			.wmp-field{min-width:120px}
+		}
+
+		@media screen and (max-width: 750px) {
+			.wmp-globalbar{padding:6px 12px;gap:6px}
+			.wmp-field{min-width:100px;flex:1;font-size:12px}
+			.wmp-btn{padding:8px 12px;font-size:12px;flex:1 1 auto}
+			.wmp-floating{right:10px;bottom:10px;gap:6px}
+			.wmp-floating .wmp-btn{font-size:12px;padding:8px 10px}
+			#head .innerhead .wmp-theme-credit{font-size:.8rem;margin-left:0;width:100%;text-align:center;margin-top:4px}
+			.project-git-info {
+				font-size: 11px;
+			}
+			.demo-notice {
+				font-size: 12px;
+				padding: 10px 15px;
+			}
+		}
+
+		@media screen and (max-width: 480px) {
+			.wmp-globalbar{flex-direction:column;align-items:stretch;padding:8px 12px}
+			.wmp-field{width:100%;min-width:0;font-size:13px;padding:8px 10px}
+			.wmp-btn{width:100%;justify-content:center;font-size:13px;padding:10px 14px}
+			.wmp-floating{right:8px;bottom:8px}
+			.wmp-floating .wmp-btn{font-size:11px;padding:7px 9px}
+			#head .innerhead .wmp-theme-credit{font-size:.75rem;display:block}
+		}
+
+		/* Touch optimization */
+		@media (hover: none) and (pointer: coarse) {
+			.wmp-btn{min-height:44px;display:flex;align-items:center;justify-content:center}
+			.wmp-field{min-height:44px}
+		}
+
+		@media (prefers-color-scheme: dark){
+			.wmp-btn{background:rgba(0,0,0,.15);border-color:#444c56;color:#c9d1d9}
+			.wmp-field{background:rgba(0,0,0,.15);border-color:#444c56;color:#c9d1d9}
+			.wmp-sep{background:#444c56}
+			#head .innerhead .wmp-theme-credit{color:#8b949e}
+			#head .innerhead .wmp-theme-credit a:hover{color:#539bf5}
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Demo Notice Banner -->
+	<div class="demo-notice">
+		<div id="demo-notice-en" style="display: none;">
+			⚠️ <strong>DEMO PAGE</strong> - This is a static demonstration of the WampServer themes. 
+			For the full PHP version, visit the <a href="https://github.com/scorpion7slayer/wampserver-modern-and-github-theme" target="_blank" rel="noopener">GitHub repository</a>.
+		</div>
+		<div id="demo-notice-fr" style="display: none;">
+			⚠️ <strong>PAGE DE DÉMONSTRATION</strong> - Ceci est une démonstration statique des thèmes WampServer. 
+			Pour la version PHP complète, visitez le <a href="https://github.com/scorpion7slayer/wampserver-modern-and-github-theme" target="_blank" rel="noopener">dépôt GitHub</a>.
+		</div>
+	</div>
+
+	<div id="head">
+		<div class="innerhead">
+			<h1><abbr title="Windows">W</abbr><abbr title="Apache">a</abbr><abbr title="MySQL/MariaDB">m</abbr><abbr title="PHP">p</abbr><abbr title="server WEB local">server</abbr></h1>
+			<ul>
+				<li>Apache 2.4</li><li>-</li><li>MySQL 5, 8 &amp; 9</li><li>-</li><li>MariaDB 10 &amp; 11</li><li>-</li><li>PHP 5, 7 &amp; 8</li>
+			</ul>
+		</div>
+		<ul class="utility">
+			<li>Version 3.3.8 - 64bit</li>
+			<li>
+				<form method="get" style="display:inline-block;">
+					<select name="lang" id="langues" onchange="switchLanguage(this.value);">
+						<option value="english">english</option>
+						<option value="french">french</option>
+					</select>
+				</form>
+				<select id="themes">
+					<option id="github-theme">github-theme</option>
+					<option id="github-theme-dark">github-theme-dark</option>
+					<option id="Modern Dark">Modern Dark</option>
+				</select>
+			</li>
+		</ul>
+	</div>
+
+	<!-- GitHub Global Bar -->
+	<div class="wmp-globalbar">
+		<input id="wmp-gh-repo" class="wmp-field" type="text" placeholder="owner/repo" value="scorpion7slayer/wampserver-modern-and-github-theme" />
+		<button id="wmp-gh-open" class="wmp-btn" type="button">Open</button>
+		<button id="wmp-gh-issues" class="wmp-btn" type="button">Issues</button>
+		<button id="wmp-gh-pulls" class="wmp-btn" type="button">Pulls</button>
+	</div>
+
+	<div class="config">
+		<div class="innerconfig">
+			<h2 id="config-title">Server Configuration</h2>
+			<button type="button" class="wmp-btn" style="float: right;" id="copy-config-btn">Copy config</button>
+			<dl class="content">
+				<div class="dl-row">
+					<dt id="label-apache">Apache Version</dt>
+					<dd>2.4.62  -  <a href='http://httpd.apache.org/docs/2.4/en/' target="_blank">Documentation of Apache</a> - <a href='#apachemodloaded'><small style='color:#777;'>Apache loaded modules</small></a></dd>
+				</div>
+				<div class="dl-row">
+					<dt id="label-server">Server Software</dt>
+					<dd>Apache/2.4.62 (Win64) PHP/8.3.16 - Port(s) used 80 - 443</dd>
+				</div>
+				<div class="dl-row">
+					<dt id="label-php">PHP Version</dt>
+					<dd><small style='color:blue;'>[Apache module]&nbsp;</small>&nbsp;8.3.16 - <a href='http://php.net/manual/en/' target="_blank">Documentation of PHP</a> - <a href='#phpextloaded'><small style='color:#777;'>PHP Extensions</small></a></dd>
+				</div>
+				<div class="dl-row">
+					<dt>&nbsp;</dt>
+					<dd><small style='color:green;'>[FCGI]</small>&nbsp;5.6.40 - 7.0.33 - 7.1.33 - 7.2.34 - 7.3.33 - 7.4.33 - 8.0.30 - 8.1.31 - 8.2.27 - 8.3.16</dd>
+				</div>
+				<div class="dl-row">
+					<dt id="label-mysql">MySQL Version</dt>
+					<dd>8.0.40 - MySQL port used 3306 - Default DBMS - <a href='http://dev.mysql.com/doc/refman/8.0/en/' target="_blank">Documentation of MySQL</a></dd>
+				</div>
+				<div class="dl-row">
+					<dt id="label-mariadb">MariaDB Version</dt>
+					<dd>11.6.2 - MariaDB port used 3307 - <a href='http://mariadb.com/kb/en/' target="_blank">Documentation of MariaDB</a></dd>
+				</div>
+			</dl>
+		</div>
+	</div>
+
+	<div class="divider1">&nbsp;</div>
+
+	<div class="alltools four-columns">
+		<div class="inneralltools">
+			<div class="column">
+				<h2 id="tools-title">Tools</h2>
+				<ul class="tools">
+					<li><a href="javascript:void(0)" onclick="alert('This is a demo page. phpinfo() is not available.')">phpinfo()</a></li>
+					<li><a href="javascript:void(0)" onclick="alert('This is a demo page. xdebug_info() is not available.')">xdebug_info()</a></li>
+					<li><a href="javascript:void(0)" onclick="alert('This is a demo page. PhpSysInfo is not available.')">PhpSysInfo 3.4.8</a></li>
+					<li><a href="javascript:void(0)" onclick="alert('This is a demo page. Add VirtualHost is not available.')">Add a VirtualHost</a></li>
+				</ul>
+			</div>
+
+			<div class="column">
+				<h2 id="projects-title">Your Projects <span style='font-size:60%;'>(3)</span></h2>
+				<ul class="projects">
+					<li class='projectsdir'>http://localhost/project/</li>
+					<li>
+						<a href="javascript:void(0)" onclick="alert('This is a demo page.')">my-awesome-app</a>
+						<div class='project-git-info'>
+							<p class='git-link'><small>📦 <a href='https://github.com/username/my-awesome-app' target='_blank' rel='noopener'>username/my-awesome-app</a></small></p>
+						</div>
+					</li>
+					<li>
+						<a href="javascript:void(0)" onclick="alert('This is a demo page.')">portfolio-website</a>
+						<div class='project-git-info'>
+							<p class='git-link'><small>📦 <a href='https://github.com/username/portfolio-website' target='_blank' rel='noopener'>username/portfolio-website</a></small></p>
+						</div>
+					</li>
+					<li>
+						<a href="javascript:void(0)" onclick="alert('This is a demo page.')">e-commerce-demo</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="column">
+				<h2 id="alias-title">Aliases <span style='font-size:60%;'>(2)</span></h2>
+				<ul class="aliases">
+					<li><a href="javascript:void(0)" onclick="alert('This is a demo page.')">phpmyadmin 5.2.1</a></li>
+					<li><a href="javascript:void(0)" onclick="alert('This is a demo page.')">adminer 4.8.1</a></li>
+				</ul>
+			</div>
+
+			<div class="column">
+				<h2 id="vhost-title">Your VirtualHosts <span style='font-size:60%;'>(4)</span></h2>
+				<ul class="vhost">
+					<li><a href="javascript:void(0)" onclick="alert('This is a demo page.')">localhost</a></li>
+					<li><a href="javascript:void(0)" onclick="alert('This is a demo page.')">myapp.local</a>
+						<p style='margin:-11px 0 -2px 25px;color:green;'><small>FCGI -> PHP 8.3.16</small></p>
+					</li>
+					<li><a href="javascript:void(0)" onclick="alert('This is a demo page.')">dev.example.com</a>
+						<p style='margin:-11px 0 -2px 25px;color:green;'><small>HTTPS </small></p>
+					</li>
+					<li><a href="javascript:void(0)" onclick="alert('This is a demo page.')">api.local</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="divider2">&nbsp;</div>
+
+	<ul id="foot">
+		<li><a href="https://forum.wampserver.com/list.php" target="_blank">WampServer Forum</a></li>
+	</ul>
+
+	<!-- Modal Dialogs -->
+	<div id="phpextloaded" class="modalOto">
+		<div>
+			<div class='modalOtoBar'>
+				<input type='button' value='Copy' class='js-copy' onclick="copyModalContent('phpext-content')">
+				<a href="#closeOto" title="Close" class="closeOto">X</a>
+			</div>
+			<div id="phpext-content">
+				<strong>PHP 8.3.16 - Loaded Extensions (Demo)</strong><br><br>
+				Core, date, libxml, openssl, pcre, zlib, filter, hash, json, pcntl, Reflection, SPL, session, standard, sodium, mysqlnd, PDO, xml, calendar, ctype, curl, dom, mbstring, FFI, fileinfo, ftp, gd, gettext, iconv, intl, ldap, exif, mysqli, odbc, pdo_mysql, PDO_ODBC, pdo_sqlite, Phar, SimpleXML, soap, sockets, sqlite3, tokenizer, xmlreader, xmlwriter, xsl, zip, Zend OPcache
+			</div>
+		</div>
+	</div>
+
+	<div id="apachemodloaded" class="modalOto">
+		<div>
+			<div class='modalOtoBar'>
+				<input type='button' value='Copy' class='js-copy' onclick="copyModalContent('apachemod-content')">
+				<a href="#closeOto" title="Close" class="closeOto">X</a>
+			</div>
+			<div id="apachemod-content">
+				<strong>Apache 2.4.62 - Loaded Modules (Demo)</strong><br><br>
+				core_module, so_module, http_module, mpm_winnt_module, log_config_module, logio_module, version_module, unixd_module, autoindex_module, dir_module, mime_module, negotiation_module, env_module, setenvif_module, ssl_module, socache_shmcb_module, headers_module, expires_module, ext_filter_module, deflate_module, mime_magic_module, rewrite_module, alias_module, vhost_alias_module, access_compat_module, auth_basic_module, authn_core_module, authn_file_module, authz_core_module, authz_host_module, authz_user_module, authz_groupfile_module, proxy_module, proxy_fcgi_module, php_module
+			</div>
+		</div>
+	</div>
+
+	<!-- Floating Tools -->
+	<div class="wmp-floating">
+		<button class="wmp-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top</button>
+		<button class="wmp-btn" id="new-tab-toggle">Open in new tab</button>
+	</div>
+
+	<script>
+		// Translations
+		const translations = {
+			english: {
+				demoNotice: '⚠️ <strong>DEMO PAGE</strong> - This is a static demonstration of the WampServer themes. For the full PHP version, visit the ',
+				configTitle: 'Server Configuration',
+				toolsTitle: 'Tools',
+				projectsTitle: 'Your Projects',
+				aliasTitle: 'Aliases',
+				vhostTitle: 'Your VirtualHosts',
+				copyConfig: 'Copy config',
+				copied: 'Copied!',
+				copyFailed: 'Copy failed',
+				backToTop: 'Back to top',
+				openNewTab: 'Open in new tab',
+				openSameTab: 'Open in same tab',
+				labelApache: 'Apache Version',
+				labelServer: 'Server Software',
+				labelPHP: 'PHP Version',
+				labelMySQL: 'MySQL Version',
+				labelMariaDB: 'MariaDB Version'
+			},
+			french: {
+				demoNotice: '⚠️ <strong>PAGE DE DÉMONSTRATION</strong> - Ceci est une démonstration statique des thèmes WampServer. Pour la version PHP complète, visitez le ',
+				configTitle: 'Configuration du serveur',
+				toolsTitle: 'Outils',
+				projectsTitle: 'Vos Projets',
+				aliasTitle: 'Alias',
+				vhostTitle: 'Vos VirtualHosts',
+				copyConfig: 'Copier config',
+				copied: 'Copié!',
+				copyFailed: 'Copie impossible',
+				backToTop: 'En haut',
+				openNewTab: 'Ouvrir dans nouvel onglet',
+				openSameTab: 'Ouvrir dans même onglet',
+				labelApache: "Version d'Apache",
+				labelServer: 'Logiciel Serveur',
+				labelPHP: 'Version de PHP',
+				labelMySQL: 'Version de MySQL',
+				labelMariaDB: 'Version de MariaDB'
+			}
+		};
+
+		// Current language
+		let currentLang = localStorage.getItem('wampLang') || 'english';
+
+		// Switch language function
+		function switchLanguage(lang) {
+			currentLang = lang;
+			localStorage.setItem('wampLang', lang);
+			updateLanguage();
+		}
+
+		// Update all text based on current language
+		function updateLanguage() {
+			const tr = translations[currentLang];
+			
+			// Update demo notices
+			document.getElementById('demo-notice-en').style.display = currentLang === 'english' ? 'block' : 'none';
+			document.getElementById('demo-notice-fr').style.display = currentLang === 'french' ? 'block' : 'none';
+			
+			// Update headings
+			document.getElementById('config-title').textContent = tr.configTitle;
+			document.getElementById('tools-title').textContent = tr.toolsTitle;
+			document.getElementById('projects-title').innerHTML = tr.projectsTitle + " <span style='font-size:60%;'>(3)</span>";
+			document.getElementById('alias-title').innerHTML = tr.aliasTitle + " <span style='font-size:60%;'>(2)</span>";
+			document.getElementById('vhost-title').innerHTML = tr.vhostTitle + " <span style='font-size:60%;'>(4)</span>";
+			
+			// Update buttons
+			document.getElementById('copy-config-btn').textContent = tr.copyConfig;
+			
+			// Update labels
+			document.getElementById('label-apache').textContent = tr.labelApache;
+			document.getElementById('label-server').textContent = tr.labelServer;
+			document.getElementById('label-php').textContent = tr.labelPHP;
+			document.getElementById('label-mysql').textContent = tr.labelMySQL;
+			document.getElementById('label-mariadb').textContent = tr.labelMariaDB;
+			
+			// Update floating buttons
+			const floatingBtns = document.querySelectorAll('.wmp-floating .wmp-btn');
+			if (floatingBtns[0]) floatingBtns[0].textContent = tr.backToTop;
+			updateNewTabButton();
+			
+			// Update language selector
+			document.getElementById('langues').value = currentLang;
+		}
+
+		// Theme switching with all three theme CSS
+		const themeStyles = {
+			'github-theme': `/* GitHub-like light theme for WampServer Home - Enhanced */
+
+:root {
+    --bg: #f6f8fa;
+    --panel: #ffffff;
+    --panel-2: #f6f8fa;
+    --panel-3: #eaeef2;
+    --panel-subtle: #f6f8fa;
+    --text: #24292f;
+    --muted: #57606a;
+    --border: #d0d7de;
+    --accent: #0969da;
+    --accent-hover: #1f6feb;
+    --success: #1a7f37;
+    --warning: #9a6700;
+    --danger: #cf222e;
+    --shadow: 0 1px 0 rgba(27, 31, 36, 0.04), 0 8px 24px rgba(140, 149, 159, 0.2);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: radial-gradient(1200px 600px at -10% -20%, rgba(9, 105, 218, 0.06), transparent 50%),
+                radial-gradient(1200px 600px at 110% -20%, rgba(31, 111, 235, 0.06), transparent 50%),
+                var(--bg);
+    color: var(--text);
+    font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+abbr {
+    text-decoration: none;
+    border: none;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+#head {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: saturate(140%) blur(6px);
+    border-bottom: 1px solid var(--border);
+}
+.innerhead {
+    max-width: 1120px;
+    margin: 0 auto;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+.innerhead h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+}
+.innerhead h1 abbr {
+    color: var(--text);
+}
+.innerhead ul {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+}
+.innerhead ul li {
+    display: inline;
+}
+
+.utility {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.utility li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.utility select {
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.utility select:hover {
+    border-color: var(--accent);
+}
+.utility select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+}
+
+.config {
+    max-width: 1120px;
+    margin: 24px auto;
+    padding: 0 20px;
+}
+.innerconfig {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+}
+.innerconfig h2 {
+    margin: 0 0 18px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+}
+.innerconfig dl {
+    margin: 0;
+    padding: 0;
+}
+.dl-row {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--panel-2);
+}
+.dl-row:last-child {
+    border-bottom: none;
+}
+.dl-row dt {
+    flex: 0 0 160px;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+}
+.dl-row dd {
+    flex: 1;
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+.dl-row dd a {
+    color: var(--accent);
+}
+.dl-row dd small {
+    font-size: 12px;
+}
+
+.divider1, .divider2 {
+    max-width: 1120px;
+    margin: 32px auto;
+    height: 1px;
+    background: var(--border);
+}
+
+.alltools {
+    max-width: 1120px;
+    margin: 32px auto;
+    padding: 0 20px;
+}
+.inneralltools {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+.four-columns .inneralltools {
+    grid-template-columns: repeat(4, 1fr);
+}
+.three-columns .inneralltools {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.column {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.column:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(140, 149, 159, 0.25);
+}
+.column h2 {
+    margin: 0 0 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 8px;
+}
+.column ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.column ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--panel-2);
+    font-size: 13px;
+}
+.column ul li:last-child {
+    border-bottom: none;
+}
+.column ul li a {
+    color: var(--accent);
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+.column ul li a:hover {
+    color: var(--accent-hover);
+}
+.column ul li.projectsdir {
+    color: var(--muted);
+    font-size: 12px;
+    font-style: italic;
+}
+
+#foot {
+    max-width: 1120px;
+    margin: 40px auto 32px;
+    padding: 20px;
+    text-align: center;
+    list-style: none;
+    border-top: 1px solid var(--border);
+}
+#foot li {
+    display: inline-block;
+    margin: 0 12px;
+}
+#foot a {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+#foot a:hover {
+    color: var(--accent);
+}
+
+@media screen and (max-width: 1200px) {
+    .four-columns .inneralltools {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 980px) {
+    .innerhead {
+        height: auto;
+        min-height: 72px;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 20px;
+    }
+    .innerhead h1 {
+        margin-bottom: 8px;
+    }
+    .utility {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .innerhead, .config, .alltools, #foot {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    .innerconfig {
+        padding: 20px;
+    }
+    .dl-row {
+        flex-direction: column;
+        gap: 4px;
+    }
+    .dl-row dt {
+        font-weight: 600;
+    }
+    .four-columns .inneralltools,
+    .three-columns .inneralltools {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .innerhead h1 {
+        font-size: 20px;
+    }
+    .innerconfig h2 {
+        font-size: 16px;
+    }
+    .column h2 {
+        font-size: 15px;
+    }
+}`,
+			
+			'github-theme-dark': `/* GitHub Dark Dimmed theme for WampServer Home */
+
+:root {
+    --bg: #22272e;
+    --panel: #2d333b;
+    --panel-2: #2d333b;
+    --panel-3: #373e47;
+    --panel-subtle: #373e47;
+    --text: #adbac7;
+    --muted: #768390;
+    --border: #444c56;
+    --accent: #539bf5;
+    --accent-hover: #6cb6ff;
+    --success: #57ab5a;
+    --warning: #c69026;
+    --danger: #e5534b;
+    --shadow: 0 0 0 1px rgba(205, 217, 229, 0.1), 0 8px 24px rgba(1, 4, 9, 0.5);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: radial-gradient(1200px 600px at -10% -20%, rgba(83, 155, 245, 0.08), transparent 50%),
+                radial-gradient(1200px 600px at 110% -20%, rgba(108, 182, 255, 0.08), transparent 50%),
+                var(--bg);
+    color: var(--text);
+    font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+abbr {
+    text-decoration: none;
+    border: none;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+#head {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    background: rgba(45, 51, 59, 0.95);
+    backdrop-filter: saturate(140%) blur(6px);
+    border-bottom: 1px solid var(--border);
+}
+.innerhead {
+    max-width: 1120px;
+    margin: 0 auto;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+.innerhead h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+}
+.innerhead h1 abbr {
+    color: var(--text);
+}
+.innerhead ul {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+}
+.innerhead ul li {
+    display: inline;
+}
+
+.utility {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.utility li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.utility select {
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.utility select:hover {
+    border-color: var(--accent);
+}
+.utility select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+}
+
+.config {
+    max-width: 1120px;
+    margin: 24px auto;
+    padding: 0 20px;
+}
+.innerconfig {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+}
+.innerconfig h2 {
+    margin: 0 0 18px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+}
+.innerconfig dl {
+    margin: 0;
+    padding: 0;
+}
+.dl-row {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--panel-3);
+}
+.dl-row:last-child {
+    border-bottom: none;
+}
+.dl-row dt {
+    flex: 0 0 160px;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+}
+.dl-row dd {
+    flex: 1;
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+.dl-row dd a {
+    color: var(--accent);
+}
+.dl-row dd small {
+    font-size: 12px;
+}
+
+.divider1, .divider2 {
+    max-width: 1120px;
+    margin: 32px auto;
+    height: 1px;
+    background: var(--border);
+}
+
+.alltools {
+    max-width: 1120px;
+    margin: 32px auto;
+    padding: 0 20px;
+}
+.inneralltools {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+.four-columns .inneralltools {
+    grid-template-columns: repeat(4, 1fr);
+}
+.three-columns .inneralltools {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.column {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.column:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(205, 217, 229, 0.1), 0 12px 32px rgba(1, 4, 9, 0.6);
+}
+.column h2 {
+    margin: 0 0 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 8px;
+}
+.column ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.column ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--panel-3);
+    font-size: 13px;
+}
+.column ul li:last-child {
+    border-bottom: none;
+}
+.column ul li a {
+    color: var(--accent);
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+.column ul li a:hover {
+    color: var(--accent-hover);
+}
+.column ul li.projectsdir {
+    color: var(--muted);
+    font-size: 12px;
+    font-style: italic;
+}
+
+#foot {
+    max-width: 1120px;
+    margin: 40px auto 32px;
+    padding: 20px;
+    text-align: center;
+    list-style: none;
+    border-top: 1px solid var(--border);
+}
+#foot li {
+    display: inline-block;
+    margin: 0 12px;
+}
+#foot a {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+#foot a:hover {
+    color: var(--accent);
+}
+
+@media screen and (max-width: 1200px) {
+    .four-columns .inneralltools {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 980px) {
+    .innerhead {
+        height: auto;
+        min-height: 72px;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 20px;
+    }
+    .innerhead h1 {
+        margin-bottom: 8px;
+    }
+    .utility {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .innerhead, .config, .alltools, #foot {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    .innerconfig {
+        padding: 20px;
+    }
+    .dl-row {
+        flex-direction: column;
+        gap: 4px;
+    }
+    .dl-row dt {
+        font-weight: 600;
+    }
+    .four-columns .inneralltools,
+    .three-columns .inneralltools {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .innerhead h1 {
+        font-size: 20px;
+    }
+    .innerconfig h2 {
+        font-size: 16px;
+    }
+    .column h2 {
+        font-size: 15px;
+    }
+}`,
+
+			'Modern Dark': `/* Modern Dark theme - Optimized */
+
+:root {
+    --primary: #5fb4ff;
+    --primary-hover: #7cc5ff;
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel-hover: #1c2128;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --text-accent: #58a6ff;
+    --success: #3fb950;
+    --warning: #d29922;
+    --danger: #f85149;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: radial-gradient(ellipse at top, rgba(95, 180, 255, 0.05), transparent 50%),
+                radial-gradient(ellipse at bottom, rgba(95, 180, 255, 0.03), transparent 50%),
+                var(--bg);
+    color: var(--text);
+    font: 14px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+abbr {
+    text-decoration: none;
+    border: none;
+}
+
+a {
+    color: var(--text-accent);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+a:hover {
+    color: var(--primary-hover);
+}
+
+#head {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13, 17, 23, 0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+}
+.innerhead {
+    max-width: 1120px;
+    margin: 0 auto;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+.innerhead h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+}
+.innerhead ul {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.utility {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+.utility select {
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.config {
+    max-width: 1120px;
+    margin: 24px auto;
+    padding: 0 20px;
+}
+.innerconfig {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+}
+.innerconfig h2 {
+    margin: 0 0 18px;
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+}
+.dl-row {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+}
+.dl-row dt {
+    flex: 0 0 160px;
+    font-weight: 600;
+    font-size: 13px;
+}
+.dl-row dd {
+    flex: 1;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.divider1, .divider2 {
+    max-width: 1120px;
+    margin: 32px auto;
+    height: 1px;
+    background: var(--border);
+}
+
+.alltools {
+    max-width: 1120px;
+    margin: 32px auto;
+    padding: 0 20px;
+}
+.inneralltools {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+.four-columns .inneralltools {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.column {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.2s;
+}
+.column:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+}
+.column h2 {
+    margin: 0 0 14px;
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 8px;
+}
+.column ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.column ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+.column ul li a {
+    color: var(--text-accent);
+    font-weight: 500;
+}
+
+#foot {
+    max-width: 1120px;
+    margin: 40px auto 32px;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+}
+#foot a {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+@media screen and (max-width: 1200px) {
+    .four-columns .inneralltools {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 980px) {
+    .innerhead {
+        height: auto;
+        flex-direction: column;
+        padding: 16px 20px;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .inneralltools {
+        grid-template-columns: 1fr;
+    }
+    .dl-row {
+        flex-direction: column;
+    }
+}`
+		};
+
+		// Theme switching
+		function loadTheme(themeName) {
+			const styleEl = document.getElementById('theme-styles');
+			styleEl.textContent = themeStyles[themeName] || themeStyles['github-theme'];
+			localStorage.setItem('wampStyle', themeName);
+			updateThemeCredit(themeName);
+		}
+
+		// Theme credit
+		function updateThemeCredit(themeName) {
+			const h1 = document.querySelector('#head .innerhead h1');
+			if (!h1) return;
+			
+			let span = h1.querySelector('.wmp-theme-credit');
+			if (!span) {
+				span = document.createElement('span');
+				span.className = 'wmp-theme-credit';
+				h1.appendChild(span);
+			}
+			
+			const allowed = {'Modern Dark': 1, 'github-theme': 1, 'github-theme-dark': 1};
+			if (allowed[themeName]) {
+				span.innerHTML = ' - ' + themeName + ' by <a href="https://github.com/scorpion7slayer" target="_blank" rel="noopener noreferrer">scorpion7slayer</a>';
+				span.style.display = '';
+			} else {
+				span.textContent = '';
+				span.style.display = 'none';
+			}
+		}
+
+		// Theme selector
+		document.getElementById('themes').addEventListener('change', function() {
+			loadTheme(this.value);
+		});
+
+		// Copy config button
+		document.getElementById('copy-config-btn').addEventListener('click', async function() {
+			const tr = translations[currentLang];
+			const target = document.querySelector('.config .content');
+			const text = target.innerText || target.textContent || '';
+			
+			try {
+				if (navigator.clipboard && navigator.clipboard.writeText) {
+					await navigator.clipboard.writeText(text);
+					const old = this.textContent;
+					this.textContent = tr.copied;
+					setTimeout(() => this.textContent = old, 1500);
+				} else {
+					const textarea = document.createElement('textarea');
+					textarea.value = text;
+					textarea.style.position = 'fixed';
+					textarea.style.opacity = '0';
+					document.body.appendChild(textarea);
+					textarea.select();
+					document.execCommand('copy');
+					document.body.removeChild(textarea);
+					const old = this.textContent;
+					this.textContent = tr.copied;
+					setTimeout(() => this.textContent = old, 1500);
+				}
+			} catch(e) {
+				alert(tr.copyFailed);
+			}
+		});
+
+		// GitHub buttons
+		function openGitHub(path) {
+			const repo = document.getElementById('wmp-gh-repo').value.trim();
+			if (!/^[^/\s]+\/[\w.-]+$/.test(repo)) {
+				alert('Expected format: owner/repo');
+				return;
+			}
+			const url = 'https://github.com/' + repo + path;
+			const newTab = localStorage.getItem('wmp_open_new_tab') === '1';
+			if (newTab) {
+				window.open(url, '_blank', 'noopener');
+			} else {
+				window.location.href = url;
+			}
+		}
+
+		document.getElementById('wmp-gh-open').addEventListener('click', () => openGitHub(''));
+		document.getElementById('wmp-gh-issues').addEventListener('click', () => openGitHub('/issues'));
+		document.getElementById('wmp-gh-pulls').addEventListener('click', () => openGitHub('/pulls'));
+
+		// New tab toggle
+		function updateNewTabButton() {
+			const btn = document.getElementById('new-tab-toggle');
+			const tr = translations[currentLang];
+			const isNewTab = localStorage.getItem('wmp_open_new_tab') === '1';
+			btn.textContent = isNewTab ? tr.openSameTab : tr.openNewTab;
+		}
+
+		document.getElementById('new-tab-toggle').addEventListener('click', function() {
+			const current = localStorage.getItem('wmp_open_new_tab') === '1';
+			localStorage.setItem('wmp_open_new_tab', current ? '0' : '1');
+			updateNewTabButton();
+			
+			// Update all links
+			const newTab = !current;
+			document.querySelectorAll('.column a, .project-git-info a').forEach(a => {
+				if (newTab) {
+					a.setAttribute('target', '_blank');
+					a.setAttribute('rel', 'noreferrer noopener');
+				} else {
+					a.removeAttribute('target');
+					a.removeAttribute('rel');
+				}
+			});
+		});
+
+		// Copy modal content
+		function copyModalContent(id) {
+			const content = document.getElementById(id);
+			const text = content.innerText || content.textContent || '';
+			
+			try {
+				if (navigator.clipboard && navigator.clipboard.writeText) {
+					navigator.clipboard.writeText(text);
+				} else {
+					const textarea = document.createElement('textarea');
+					textarea.value = text;
+					textarea.style.position = 'fixed';
+					textarea.style.opacity = '0';
+					document.body.appendChild(textarea);
+					textarea.select();
+					document.execCommand('copy');
+					document.body.removeChild(textarea);
+				}
+			} catch(e) {
+				console.error('Copy failed:', e);
+			}
+		}
+
+		// Keyboard shortcuts
+		document.addEventListener('keydown', function(e) {
+			const tag = (e.target && e.target.tagName) || '';
+			const typing = tag === 'INPUT' || tag === 'TEXTAREA' || e.isComposing;
+			
+			if (!typing) {
+				// gg to scroll to top
+				if (e.key.toLowerCase() === 'g') {
+					if (!window.lastG) window.lastG = 0;
+					const now = Date.now();
+					if (now - window.lastG < 350) {
+						window.scrollTo({top: 0, behavior: 'smooth'});
+					}
+					window.lastG = now;
+				}
+			}
+		});
+
+		// Initialize on load
+		window.addEventListener('DOMContentLoaded', function() {
+			// Load saved theme
+			const savedTheme = localStorage.getItem('wampStyle') || 'github-theme';
+			document.getElementById('themes').value = savedTheme;
+			loadTheme(savedTheme);
+			
+			// Load saved language
+			const savedLang = localStorage.getItem('wampLang') || 'english';
+			currentLang = savedLang;
+			updateLanguage();
+			
+			// Initialize new tab toggle
+			updateNewTabButton();
+		});
+	</script>
+</body>
+</html>
