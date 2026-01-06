@@ -197,7 +197,7 @@ $pageContents .= <<<'EOGITJS'
 <!-- GitHub Integration JavaScript -->
 <script>
 (function() {
-    const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes - longer cache to reduce API calls
+    const GITHUB_API_CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes - longer cache to reduce API calls
     const MAX_RETRIES = 2;
     const INITIAL_RETRY_DELAY = 1000; // 1 second
     
@@ -220,7 +220,11 @@ $pageContents .= <<<'EOGITJS'
             commits: 'Commits',
             branches: 'Branches',
             prs: 'PRs',
-            issues: 'Issues'
+            issues: 'Issues',
+            timeAgo: 'il y a ',
+            timeMinutes: 'min',
+            timeHours: 'h',
+            timeDays: 'j'
         },
         en: {
             loading: 'Loading GitHub data...',
@@ -239,13 +243,16 @@ $pageContents .= <<<'EOGITJS'
             commits: 'Commits',
             branches: 'Branches',
             prs: 'PRs',
-            issues: 'Issues'
+            issues: 'Issues',
+            timeAgo: '',
+            timeMinutes: 'm ago',
+            timeHours: 'h ago',
+            timeDays: 'd ago'
         }
     };
     
     // Detect language from page
     const currentLang = document.documentElement.lang || 
-                        (document.querySelector('html[lang]')?.getAttribute('lang')) || 
                         (navigator.language.startsWith('fr') ? 'fr' : 'en');
     const lang = translations[currentLang] || translations.en;
     
@@ -263,7 +270,7 @@ $pageContents .= <<<'EOGITJS'
             if (!cached) return null;
             
             const data = JSON.parse(cached);
-            if (Date.now() - data.timestamp > CACHE_DURATION) {
+            if (Date.now() - data.timestamp > GITHUB_API_CACHE_DURATION_MS) {
                 localStorage.removeItem(key);
                 return null;
             }
@@ -368,15 +375,9 @@ $pageContents .= <<<'EOGITJS'
         const hours = Math.floor(diff / 3600000);
         const days = Math.floor(diff / 86400000);
         
-        if (currentLang === 'fr') {
-            if (minutes < 60) return `il y a ${minutes}min`;
-            if (hours < 24) return `il y a ${hours}h`;
-            return `il y a ${days}j`;
-        } else {
-            if (minutes < 60) return `${minutes}m ago`;
-            if (hours < 24) return `${hours}h ago`;
-            return `${days}d ago`;
-        }
+        if (minutes < 60) return lang.timeAgo + minutes + lang.timeMinutes;
+        if (hours < 24) return lang.timeAgo + hours + lang.timeHours;
+        return lang.timeAgo + days + lang.timeDays;
     }
     
     function renderRepoInfo(container, data) {
