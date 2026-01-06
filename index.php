@@ -132,8 +132,10 @@ if (file_exists('wamplangues/help_' . $langue . '.php')) {
 $PhpAllVersionsNotFcgi = '';
 if (!isset($c_ApacheDefine['PHPROOT'])) {
 	$PhpAllVersionsNotFcgi = <<< EOF
-		<dt>&nbsp;</dt>
-		   <dd><small style='color:red;'>[FCGI]&nbsp;{$langues['fcgi_not_loaded']}</small></dd>
+		<div class="dl-row">
+			<dt>&nbsp;</dt>
+		   	<dd><small style='color:red;'>[FCGI]&nbsp;{$langues['fcgi_not_loaded']}</small></dd>
+		</div>
 EOF;
 }
 
@@ -144,8 +146,10 @@ if (isset($wampConf['SupportMySQL']) && $wampConf['SupportMySQL'] == 'on') {
 	$nbDBMS++;
 	$defaultDBMSMySQL = ($wampConf['mysqlPortUsed'] == '3306') ? "&nbsp;-&nbsp;" . $langues['defaultDBMS'] : "";
 	$MySQLdb = <<< EOF
-<dt>{$langues['versm']}</dt>
+<div class="dl-row">
+	<dt>{$langues['versm']}</dt>
 	<dd>{$mysqlVersion}&nbsp;-&nbsp;{$langues['mysqlportUsed']}{$Mysqlport}{$defaultDBMSMySQL}&nbsp;-&nbsp; <a href='http://{$langues['docm']}'>{$langues['documentation-of']} MySQL</a></dd>
+</div>
 EOF;
 }
 
@@ -155,8 +159,10 @@ if (isset($wampConf['SupportMariaDB']) && $wampConf['SupportMariaDB'] == 'on') {
 	$nbDBMS++;
 	$defaultDBMSMaria = ($wampConf['mariaPortUsed'] == '3306') ? "&nbsp;-&nbsp;" . $langues['defaultDBMS'] : "";
 	$MariaDB = <<< EOF
-<dt>{$langues['versmaria']}</dt>
-  <dd>{$c_mariadbVersion}&nbsp;-&nbsp;{$langues['mariaportUsed']}{$wampConf['mariaPortUsed']}{$defaultDBMSMaria}&nbsp;-&nbsp; <a href='http://{$langues['docmaria']}'>{$langues['documentation-of']} MariaDB</a></dd>
+<div class="dl-row">
+	<dt>{$langues['versmaria']}</dt>
+  	<dd>{$c_mariadbVersion}&nbsp;-&nbsp;{$langues['mariaportUsed']}{$wampConf['mariaPortUsed']}{$defaultDBMSMaria}&nbsp;-&nbsp; <a href='http://{$langues['docmaria']}'>{$langues['documentation-of']} MariaDB</a></dd>
+</div>
 EOF;
 }
 
@@ -608,16 +614,24 @@ $pageContents = <<< EOPAGE
 	    <div class="innerconfig">
         <h2>{$langues['titreConf']}</h2>
 	        <dl class="content">
-		        <dt>{$langues['versa']}</dt>
+	            <div class="dl-row">
+		            <dt>{$langues['versa']}</dt>
 		            <dd>{$apacheVersion}&nbsp;&nbsp;-&nbsp;<a href='http://{$langues[$doca_version]}'>{$langues['documentation-of']} Apache</a>&nbsp;-&nbsp;{$popupApacheModLink}</dd>
-		        <dt>{$langues['server']}</dt>
+		        </div>
+		        <div class="dl-row">
+		            <dt>{$langues['server']}</dt>
 		            <dd>{$server_software}&nbsp;-&nbsp;{$langues['portUsed']}{$ListenPorts}</dd>
-		        <dt>{$langues['versp']}</dt>
+		        </div>
+		        <div class="dl-row">
+		            <dt>{$langues['versp']}</dt>
 		            <dd><small style='color:blue;'>[Apache module]&nbsp;</small>&nbsp;{$phpVersion}&nbsp;-&nbsp;<a href='http://{$langues['docp']}'>{$langues['documentation-of']} PHP</a>&nbsp;-&nbsp;{$popupPHPExtLink}</dd>
+		        </div>
 		        {$PhpAllVersionsNotFcgi}
-		        <dt>&nbsp;</dt>
-		        		<dd><small style='color:green;'>[FCGI]</small>&nbsp;{$PhpAllVersions}</dd>
-						{$DBMSTypes}
+		        <div class="dl-row">
+		            <dt>&nbsp;</dt>
+		            <dd><small style='color:green;'>[FCGI]</small>&nbsp;{$PhpAllVersions}</dd>
+		        </div>
+				{$DBMSTypes}
 	        </dl>
       </div>
   </div>
