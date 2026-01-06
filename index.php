@@ -132,8 +132,10 @@ if (file_exists('wamplangues/help_' . $langue . '.php')) {
 $PhpAllVersionsNotFcgi = '';
 if (!isset($c_ApacheDefine['PHPROOT'])) {
 	$PhpAllVersionsNotFcgi = <<< EOF
-		<dt>&nbsp;</dt>
-		   <dd><small style='color:red;'>[FCGI]&nbsp;{$langues['fcgi_not_loaded']}</small></dd>
+		<div class="dl-row">
+			<dt>&nbsp;</dt>
+		   	<dd><small style='color:red;'>[FCGI]&nbsp;{$langues['fcgi_not_loaded']}</small></dd>
+		</div>
 EOF;
 }
 
@@ -144,8 +146,10 @@ if (isset($wampConf['SupportMySQL']) && $wampConf['SupportMySQL'] == 'on') {
 	$nbDBMS++;
 	$defaultDBMSMySQL = ($wampConf['mysqlPortUsed'] == '3306') ? "&nbsp;-&nbsp;" . $langues['defaultDBMS'] : "";
 	$MySQLdb = <<< EOF
-<dt>{$langues['versm']}</dt>
+<div class="dl-row">
+	<dt>{$langues['versm']}</dt>
 	<dd>{$mysqlVersion}&nbsp;-&nbsp;{$langues['mysqlportUsed']}{$Mysqlport}{$defaultDBMSMySQL}&nbsp;-&nbsp; <a href='http://{$langues['docm']}'>{$langues['documentation-of']} MySQL</a></dd>
+</div>
 EOF;
 }
 
@@ -155,8 +159,10 @@ if (isset($wampConf['SupportMariaDB']) && $wampConf['SupportMariaDB'] == 'on') {
 	$nbDBMS++;
 	$defaultDBMSMaria = ($wampConf['mariaPortUsed'] == '3306') ? "&nbsp;-&nbsp;" . $langues['defaultDBMS'] : "";
 	$MariaDB = <<< EOF
-<dt>{$langues['versmaria']}</dt>
-  <dd>{$c_mariadbVersion}&nbsp;-&nbsp;{$langues['mariaportUsed']}{$wampConf['mariaPortUsed']}{$defaultDBMSMaria}&nbsp;-&nbsp; <a href='http://{$langues['docmaria']}'>{$langues['documentation-of']} MariaDB</a></dd>
+<div class="dl-row">
+	<dt>{$langues['versmaria']}</dt>
+  	<dd>{$c_mariadbVersion}&nbsp;-&nbsp;{$langues['mariaportUsed']}{$wampConf['mariaPortUsed']}{$defaultDBMSMaria}&nbsp;-&nbsp; <a href='http://{$langues['docmaria']}'>{$langues['documentation-of']} MariaDB</a></dd>
+</div>
 EOF;
 }
 
@@ -511,6 +517,9 @@ if ($VirtualHostMenu == "on") {
 }
 //End retrieving ServerName from httpd-vhosts.conf
 
+// Include Git detection
+require 'wampthemes/git-detection.php';
+
 // Project recovery
 $list_projects = array();
 $handle = opendir(".");
@@ -519,13 +528,34 @@ while (false !== ($file = readdir($handle))) {
 		$list_projects[] = $file;
 }
 closedir($handle);
+
+// Scanner les projets Git
+$gitProjects = scanAllProjectsGit($list_projects);
+
 $projectContents = '';
 if (count($list_projects) > 0) {
 	if ($wampConf['LinksOnProjectsHomePage'] == 'on') {
 		$projectContents .= "<li class='projectsdir'>http://localhost/project/</li>\n";
 	}
 	foreach ($list_projects as $file) {
-		$projectContents .= ($wampConf['LinksOnProjectsHomePage'] == 'on') ? "<li><a href='http://localhost/" . $file . "/'>" . $file . "</a></li>" : '<li>' . $file . '</li>';
+		// Générer le lien du projet
+		$projectLink = ($wampConf['LinksOnProjectsHomePage'] == 'on') 
+			? "<a href='http://localhost/" . $file . "/'>" . $file . "</a>" 
+			: $file;
+		
+		// Ajouter les informations Git si disponibles
+		$gitInfo = '';
+		if (isset($gitProjects[$file])) {
+			$git = $gitProjects[$file];
+			$gitInfo = "<div class='project-git-info' data-owner='" . htmlspecialchars($git['owner'], ENT_QUOTES, 'UTF-8') . "' data-repo='" . htmlspecialchars($git['repo'], ENT_QUOTES, 'UTF-8') . "'>";
+			$gitInfo .= "<p class='git-link'><small>📦 <a href='" . htmlspecialchars($git['url'], ENT_QUOTES, 'UTF-8') . "' target='_blank' rel='noopener'>" . htmlspecialchars($git['slug'], ENT_QUOTES, 'UTF-8') . "</a></small></p>";
+			$gitInfo .= "<div class='github-integration' id='gh-" . htmlspecialchars($file, ENT_QUOTES, 'UTF-8') . "'></div>";
+			$gitInfo .= "</div>";
+			// Add 2 extra lines for scroll calculation: 1 for git link paragraph + 1 for github integration div
+			$nbProjectsLines += 2;
+		}
+		
+		$projectContents .= "<li>" . $projectLink . $gitInfo . "</li>";
 		$nbProjects++;
 		$nbProjectsLines++;
 	}
@@ -608,16 +638,24 @@ $pageContents = <<< EOPAGE
 	    <div class="innerconfig">
         <h2>{$langues['titreConf']}</h2>
 	        <dl class="content">
-		        <dt>{$langues['versa']}</dt>
+	            <div class="dl-row">
+		            <dt>{$langues['versa']}</dt>
 		            <dd>{$apacheVersion}&nbsp;&nbsp;-&nbsp;<a href='http://{$langues[$doca_version]}'>{$langues['documentation-of']} Apache</a>&nbsp;-&nbsp;{$popupApacheModLink}</dd>
-		        <dt>{$langues['server']}</dt>
+		        </div>
+		        <div class="dl-row">
+		            <dt>{$langues['server']}</dt>
 		            <dd>{$server_software}&nbsp;-&nbsp;{$langues['portUsed']}{$ListenPorts}</dd>
-		        <dt>{$langues['versp']}</dt>
+		        </div>
+		        <div class="dl-row">
+		            <dt>{$langues['versp']}</dt>
 		            <dd><small style='color:blue;'>[Apache module]&nbsp;</small>&nbsp;{$phpVersion}&nbsp;-&nbsp;<a href='http://{$langues['docp']}'>{$langues['documentation-of']} PHP</a>&nbsp;-&nbsp;{$popupPHPExtLink}</dd>
+		        </div>
 		        {$PhpAllVersionsNotFcgi}
-		        <dt>&nbsp;</dt>
-		        		<dd><small style='color:green;'>[FCGI]</small>&nbsp;{$PhpAllVersions}</dd>
-						{$DBMSTypes}
+		        <div class="dl-row">
+		            <dt>&nbsp;</dt>
+		            <dd><small style='color:green;'>[FCGI]</small>&nbsp;{$PhpAllVersions}</dd>
+		        </div>
+				{$DBMSTypes}
 	        </dl>
       </div>
   </div>
@@ -674,6 +712,7 @@ $pageContents .= <<< EOPAGEC
 EOPAGEC;
 include 'wampthemes/select_themes.php';
 include 'wampthemes/enhancements.php';
+include 'wampthemes/github-integration.php';
 include 'wampthemes/copy_modal.php';
 $pageContents .= <<< EOPAGED
 </body>

@@ -164,15 +164,23 @@ h2 span {
 dl {
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.dl-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
 }
 
 dt {
     width: 220px;
+    flex-shrink: 0;
     height: 36px;
     line-height: 36px;
     text-align: center;
-    float: left;
-    clear: both;
     margin: 0;
     padding: 0;
     background: var(--panel-subtle);
@@ -182,7 +190,8 @@ dt {
 }
 
 dd {
-    margin: 0 0 0 236px;
+    flex: 1;
+    margin: 0;
     padding: 8px 8px;
     overflow: auto;
     color: var(--text);
@@ -218,6 +227,20 @@ dd ul li:nth-child(4n + 3) {
 
 dd ul li:nth-child(4n + 4) {
     border-left-color: var(--danger);
+}
+
+/* Responsive: stack dt/dd on mobile */
+@media screen and (max-width: 900px) {
+    .dl-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    dt {
+        width: 100%;
+        text-align: left;
+        padding-left: 12px;
+    }
 }
 
 /* Sections */
