@@ -16,6 +16,13 @@
         0 8px 24px rgba(140, 149, 159, 0.2);
 }
 
+/* Global box-sizing for consistent layouts */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 html,
 body {
     margin: 0;
@@ -266,12 +273,13 @@ dd ul li:nth-child(4n + 4) {
     border-radius: 6px;
     box-shadow: var(--shadow);
     margin: 8px 6px;
+    box-sizing: border-box;
 }
 .three-columns .column {
-    width: 31.5%;
+    width: calc(33.333% - 14px);
 }
 .four-columns .column {
-    width: 23.5%;
+    width: calc(25% - 14px);
 }
 
 .column > h2 {
@@ -817,4 +825,24 @@ select:focus {
         width: 100%;
         text-align: center;
     }
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--panel-subtle);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
 }

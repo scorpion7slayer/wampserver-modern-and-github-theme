@@ -710,10 +710,41 @@ $pageContents .= <<< EOPAGEC
 {$ModalDialogs}
 
 EOPAGEC;
-include 'wampthemes/select_themes.php';
+// Include WampServer standard files (conditional to avoid errors if files don't exist)
+if (file_exists('wampthemes/select_themes.php')) {
+	include 'wampthemes/select_themes.php';
+} else {
+	// Fallback theme selector script for standalone usage
+	$pageContents .= <<<'EOTHEMEJS'
+<script>
+(function(){
+	var themeSelect = document.getElementById('themes');
+	if (!themeSelect) return;
+	
+	// Load saved theme from localStorage
+	var savedTheme = localStorage.getItem('wampStyle');
+	if (savedTheme) {
+		var opt = themeSelect.querySelector('#' + savedTheme);
+		if (opt) opt.selected = true;
+		document.getElementById('stylecall').href = 'wampthemes/' + savedTheme + '/style.css';
+	}
+	
+	// Handle theme changes
+	themeSelect.addEventListener('change', function() {
+		var theme = this.value;
+		localStorage.setItem('wampStyle', theme);
+		document.getElementById('stylecall').href = 'wampthemes/' + theme + '/style.css';
+	});
+})();
+</script>
+EOTHEMEJS;
+}
 include 'wampthemes/enhancements.php';
 include 'wampthemes/github-integration.php';
-include 'wampthemes/copy_modal.php';
+// Include copy_modal only if it exists (WampServer standard file)
+if (file_exists('wampthemes/copy_modal.php')) {
+	include 'wampthemes/copy_modal.php';
+}
 $pageContents .= <<< EOPAGED
 </body>
 </html>

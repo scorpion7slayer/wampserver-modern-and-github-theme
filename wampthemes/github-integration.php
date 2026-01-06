@@ -461,10 +461,19 @@ $pageContents .= <<<'EOGITJS'
     }
     
     async function loadGitHubIntegration(element) {
-        const owner = element.closest('.project-git-info').dataset.owner;
-        const repo = element.closest('.project-git-info').dataset.repo;
+        const parentInfo = element.closest('.project-git-info');
+        if (!parentInfo) {
+            element.classList.add('empty');
+            return;
+        }
         
-        if (!owner || !repo) return;
+        const owner = parentInfo.dataset.owner;
+        const repo = parentInfo.dataset.repo;
+        
+        if (!owner || !repo) {
+            element.classList.add('empty');
+            return;
+        }
         
         element.classList.add('loading');
         element.classList.remove('error', 'empty');
