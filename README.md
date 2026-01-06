@@ -12,7 +12,7 @@ All themes are **fully responsive** and automatically adapt to mobile, tablet, a
 
 ## 🌐 Live Demo
 
-**[View the standalone HTML demo](demo.html)** - A static demonstration page that showcases all themes and features without requiring WampServer or PHP. Perfect for previewing the themes before installation!
+**[View the standalone HTML demo](https://scorpion7slayer.github.io/wampserver-modern-and-github-theme/index.html)** - A static demonstration page that showcases all themes and features without requiring WampServer or PHP. Perfect for previewing the themes before installation!
 
 The demo includes:
 - All three themes with live switching
