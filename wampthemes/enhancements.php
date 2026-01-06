@@ -24,16 +24,34 @@ $__wmp_gitBootstrap = '<script>window.WMP_GIT = { hasGit: ' . ($__wmp_hasGit ? '
 
 $pageContents .= <<<EOCSSJS
 {$__wmp_gitBootstrap}
-<!-- WMP Enhancements v1.1 - ASCII cleaned -->
+<!-- WMP Enhancements v1.2 - Responsive improvements -->
 <style>
-  .list-tools{display:flex;gap:8px;align-items:center;margin:6px 0 8px}
-  .wmp-btn{padding:6px 10px;border:1px solid #d0d7de;background:#f6f8fa;border-radius:6px;cursor:pointer}
-  .wmp-btn:hover{filter:brightness(0.98)}
+  .list-tools{display:flex;gap:8px;align-items:center;margin:6px 0 8px;flex-wrap:wrap}
+  .wmp-btn{padding:6px 10px;border:1px solid #d0d7de;background:#f6f8fa;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.15s ease}
+  .wmp-btn:hover{filter:brightness(0.98);transform:translateY(-1px)}
+  .wmp-btn:active{transform:translateY(0)}
   .wmp-floating{position:fixed;right:14px;bottom:14px;display:flex;flex-direction:column;gap:8px;z-index:9999}
   .wmp-floating .wmp-btn{box-shadow:0 8px 24px rgba(140,149,159,0.2)}
   .wmp-globalbar{max-width:1120px;margin:8px auto 6px;padding:6px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-  .wmp-field{padding:6px 8px;border:1px solid #d0d7de;border-radius:6px;background:#fff;min-width:140px}
+  .wmp-field{padding:6px 8px;border:1px solid #d0d7de;border-radius:6px;background:#fff;min-width:140px;font-size:13px}
   .wmp-sep{flex:0 0 1px;height:24px;background:#d0d7de;margin:0 4px}
+  
+  /* Responsive enhancements */
+  @media screen and (max-width: 750px) {
+    .wmp-globalbar{padding:6px 12px;gap:6px}
+    .wmp-field{min-width:100px;flex:1;font-size:12px}
+    .wmp-btn{padding:8px 12px;font-size:12px;flex:1 1 auto}
+    .wmp-floating{right:10px;bottom:10px;gap:6px}
+    .wmp-floating .wmp-btn{font-size:11px;padding:6px 8px}
+  }
+  
+  @media screen and (max-width: 480px) {
+    .wmp-globalbar{flex-direction:column;align-items:stretch}
+    .wmp-field{width:100%}
+    .wmp-btn{width:100%;justify-content:center}
+    .wmp-floating{right:8px;bottom:8px}
+  }
+  
   @media (prefers-color-scheme: dark){
     .wmp-btn{background:rgba(0,0,0,.15);border-color:#444c56;color:#c9d1d9}
     .wmp-field{background:rgba(0,0,0,.15);border-color:#444c56;color:#c9d1d9}
@@ -44,6 +62,16 @@ $pageContents .= <<<EOCSSJS
   #head .innerhead .wmp-theme-credit{margin-left:10px;font-size:.9rem;color:#57606a;white-space:nowrap}
   #head .innerhead .wmp-theme-credit a{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor;transition:all .2s}
   #head .innerhead .wmp-theme-credit a:hover{color:#0969da;border-bottom-style:solid}
+  
+  /* Responsive theme credit */
+  @media screen and (max-width: 750px) {
+    #head .innerhead .wmp-theme-credit{font-size:.8rem;margin-left:0;width:100%;text-align:center;margin-top:4px}
+  }
+  
+  @media screen and (max-width: 480px) {
+    #head .innerhead .wmp-theme-credit{font-size:.75rem;display:block}
+  }
+  
   @media (prefers-color-scheme: dark){
     #head .innerhead .wmp-theme-credit{color:#8b949e}
     #head .innerhead .wmp-theme-credit a:hover{color:#539bf5}

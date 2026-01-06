@@ -1,4 +1,4 @@
-/* GitHub-like light theme for WampServer Home */
+/* GitHub-like light theme for WampServer Home - Enhanced */
 
 :root {
     --bg: #f6f8fa;
@@ -22,6 +22,10 @@ body {
     padding: 0;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background: radial-gradient(
             1200px 600px at -10% -20%,
@@ -35,8 +39,10 @@ body {
         ),
         var(--bg);
     color: var(--text);
-    font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
         "Apple Color Emoji", "Segoe UI Emoji";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 abbr {
@@ -47,10 +53,16 @@ abbr {
 a {
     color: var(--accent);
     text-decoration: none;
+    transition: color 0.2s ease;
 }
 a:hover {
     color: var(--accent-hover);
     text-decoration: underline;
+}
+a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
 }
 
 /* Header */
@@ -101,6 +113,16 @@ a:hover {
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 6px 10px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.utility select:hover {
+    border-color: var(--accent);
+}
+.utility select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+    outline: none;
 }
 
 /* Config */
