@@ -551,7 +551,8 @@ if (count($list_projects) > 0) {
 			$gitInfo .= "<p class='git-link'><small>📦 <a href='" . htmlspecialchars($git['url'], ENT_QUOTES, 'UTF-8') . "' target='_blank' rel='noopener'>" . htmlspecialchars($git['slug'], ENT_QUOTES, 'UTF-8') . "</a></small></p>";
 			$gitInfo .= "<div class='github-integration' id='gh-" . htmlspecialchars($file, ENT_QUOTES, 'UTF-8') . "'></div>";
 			$gitInfo .= "</div>";
-			$nbProjectsLines += 2; // Pour le scroll
+			// Add 2 extra lines for scroll calculation: 1 for git link paragraph + 1 for github integration div
+			$nbProjectsLines += 2;
 		}
 		
 		$projectContents .= "<li>" . $projectLink . $gitInfo . "</li>";
