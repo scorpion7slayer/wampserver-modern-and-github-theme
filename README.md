@@ -10,6 +10,16 @@ Modern and responsive themes for WampServer homepage with GitHub integration.
 
 All themes are **fully responsive** and automatically adapt to mobile, tablet, and desktop screens.
 
+## 🌐 Live Demo
+
+**[View the standalone HTML demo](demo.html)** - A static demonstration page that showcases all themes and features without requiring WampServer or PHP. Perfect for previewing the themes before installation!
+
+The demo includes:
+- All three themes with live switching
+- Full internationalization (English/French)
+- Mock data simulating real WampServer environment
+- All interactive features (modals, buttons, GitHub integration)
+
 ## 📦 Installation
 
 ### Step 1: Download the files
