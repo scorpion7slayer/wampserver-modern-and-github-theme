@@ -53,11 +53,24 @@ C:\wamp64\www\
 ## ✨ Features
 
 -   🎨 **3 modern themes** with professional design
--   📱 **Responsive design** - adapts to all screen sizes
--   🐙 **GitHub integration** - automatic Git repository detection
+-   🌐 **Internationalization** - Full English and French support
+-   📱 **Enhanced responsive design** - Optimized for all screen sizes with 6 breakpoints
+-   📱 **Touch-optimized** - 44px minimum touch targets for mobile devices
+-   🐙 **GitHub integration** - Automatic Git repository detection
 -   ⌨️ **Keyboard shortcuts** for quick navigation
--   🛠️ **Productivity tools** - sort, JSON export, config copy
+-   🛠️ **Productivity tools** - Config copy (with browser fallback), GitHub links
 -   🎯 **Floating toolbar** for quick access
+-   ♿ **Accessibility** - Focus states and touch optimizations
+
+## 🌐 Language Support
+
+The interface automatically adapts to your WampServer language setting:
+
+-   **English** - Full UI translation
+-   **Français** - Traduction complète de l'interface
+-   **Fallback** - Defaults to English for other languages
+
+Language selection is synchronized with WampServer's language preference.
 
 ## 🔧 Compatibility
 
@@ -65,6 +78,17 @@ C:\wamp64\www\
 -   ✅ Compatible with all existing themes
 -   ✅ No external dependencies
 -   ✅ Backward compatible
+-   ✅ Modern browsers (full features)
+-   ✅ Older browsers (graceful fallback for clipboard API)
+-   ✅ Mobile devices (touch-optimized)
+
+## 📊 Technical Highlights
+
+-   **Optimized code** - 45% reduction in Modern Dark theme (525 lines removed)
+-   **Responsive breakpoints** - 6 breakpoints (480px, 750px, 900px, 980px, 1200px, desktop)
+-   **Touch targets** - Minimum 44px for accessibility
+-   **Performance** - No external dependencies, vanilla JS/CSS
+-   **Security** - CodeQL scanned, no vulnerabilities
 
 ## 📝 License
 
