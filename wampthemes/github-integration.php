@@ -22,11 +22,44 @@ $pageContents .= <<<'EOGITJS'
     padding: 12px;
     margin-top: 8px;
     font-size: 12px;
+    min-height: 0;
 }
 
 .github-integration.loading {
     text-align: center;
     color: var(--muted, #a9b4c3);
+    padding: 8px 12px;
+}
+
+.github-integration.error {
+    text-align: center;
+    padding: 8px 12px;
+    background: var(--panel-2, #2d2a24);
+    border-color: var(--danger, #e5534b);
+}
+
+.github-integration.empty {
+    display: none;
+}
+
+.github-error-message {
+    color: var(--danger, #ff7b72);
+    margin-bottom: 8px;
+}
+
+.github-retry-btn {
+    padding: 6px 12px;
+    background: var(--accent, #5fb4ff);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background 0.2s;
+}
+
+.github-retry-btn:hover {
+    background: var(--accent-hover, #6cb6ff);
 }
 
 .github-section {
@@ -164,10 +197,64 @@ $pageContents .= <<<'EOGITJS'
 <!-- GitHub Integration JavaScript -->
 <script>
 (function() {
-    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+    const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes - longer cache to reduce API calls
+    const MAX_RETRIES = 2;
+    const INITIAL_RETRY_DELAY = 1000; // 1 second
+    
+    // Translations
+    const translations = {
+        fr: {
+            loading: 'Chargement des données GitHub...',
+            rateLimit: 'Limite de requêtes API GitHub atteinte. Veuillez réessayer dans ',
+            rateLimitMinutes: ' minutes.',
+            networkError: 'Erreur réseau. Impossible de contacter GitHub.',
+            apiError: 'Erreur API GitHub. Code: ',
+            notFound: 'Dépôt non trouvé sur GitHub.',
+            genericError: 'Erreur de chargement des données GitHub.',
+            retry: 'Réessayer',
+            noCommits: 'Aucun commit récent',
+            noBranches: 'Aucune branche',
+            noPRs: 'Aucune PR ouverte',
+            noIssues: 'Aucune issue ouverte',
+            by: 'par',
+            commits: 'Commits',
+            branches: 'Branches',
+            prs: 'PRs',
+            issues: 'Issues'
+        },
+        en: {
+            loading: 'Loading GitHub data...',
+            rateLimit: 'GitHub API rate limit reached. Please retry in ',
+            rateLimitMinutes: ' minutes.',
+            networkError: 'Network error. Unable to contact GitHub.',
+            apiError: 'GitHub API error. Code: ',
+            notFound: 'Repository not found on GitHub.',
+            genericError: 'Error loading GitHub data.',
+            retry: 'Retry',
+            noCommits: 'No recent commits',
+            noBranches: 'No branches',
+            noPRs: 'No open PRs',
+            noIssues: 'No open issues',
+            by: 'by',
+            commits: 'Commits',
+            branches: 'Branches',
+            prs: 'PRs',
+            issues: 'Issues'
+        }
+    };
+    
+    // Detect language from page
+    const currentLang = document.documentElement.lang || 
+                        (document.querySelector('html[lang]')?.getAttribute('lang')) || 
+                        (navigator.language.startsWith('fr') ? 'fr' : 'en');
+    const lang = translations[currentLang] || translations.en;
     
     function getCacheKey(owner, repo, endpoint) {
         return `gh_${owner}_${repo}_${endpoint}`;
+    }
+    
+    function getRateLimitCacheKey(owner, repo) {
+        return `gh_ratelimit_${owner}_${repo}`;
     }
     
     function getCache(key) {
@@ -197,21 +284,78 @@ $pageContents .= <<<'EOGITJS'
         }
     }
     
-    async function fetchGitHubAPI(owner, repo, endpoint) {
+    function checkRateLimit(owner, repo) {
+        const rateLimitKey = getRateLimitCacheKey(owner, repo);
+        const rateLimitData = getCache(rateLimitKey);
+        if (rateLimitData && rateLimitData.resetTime > Date.now()) {
+            return rateLimitData;
+        }
+        localStorage.removeItem(rateLimitKey);
+        return null;
+    }
+    
+    function setRateLimit(owner, repo, resetTime) {
+        const rateLimitKey = getRateLimitCacheKey(owner, repo);
+        setCache(rateLimitKey, { resetTime });
+    }
+    
+    async function fetchGitHubAPI(owner, repo, endpoint, retryCount = 0) {
         const cacheKey = getCacheKey(owner, repo, endpoint);
         const cached = getCache(cacheKey);
         if (cached) return cached;
         
+        // Check if we're rate limited
+        const rateLimit = checkRateLimit(owner, repo);
+        if (rateLimit) {
+            const minutesLeft = Math.ceil((rateLimit.resetTime - Date.now()) / 60000);
+            throw new Error(`RATE_LIMIT:${minutesLeft}`);
+        }
+        
         try {
             const response = await fetch(`https://api.github.com/repos/${owner}/${repo}${endpoint}`);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            // Check rate limit headers
+            const remaining = response.headers.get('X-RateLimit-Remaining');
+            const reset = response.headers.get('X-RateLimit-Reset');
+            
+            if (remaining === '0' && reset) {
+                const resetTime = parseInt(reset) * 1000;
+                setRateLimit(owner, repo, resetTime);
+            }
+            
+            if (response.status === 403 && remaining === '0') {
+                const resetTime = parseInt(reset) * 1000;
+                const minutesLeft = Math.ceil((resetTime - Date.now()) / 60000);
+                throw new Error(`RATE_LIMIT:${minutesLeft}`);
+            }
+            
+            if (response.status === 404) {
+                throw new Error('NOT_FOUND');
+            }
+            
+            if (!response.ok) {
+                throw new Error(`HTTP_${response.status}`);
+            }
             
             const data = await response.json();
             setCache(cacheKey, data);
             return data;
         } catch (error) {
+            if (error.message.startsWith('RATE_LIMIT:') || 
+                error.message === 'NOT_FOUND' || 
+                error.message.startsWith('HTTP_')) {
+                throw error;
+            }
+            
+            // Network error - retry with exponential backoff
+            if (retryCount < MAX_RETRIES) {
+                const delay = INITIAL_RETRY_DELAY * Math.pow(2, retryCount);
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return fetchGitHubAPI(owner, repo, endpoint, retryCount + 1);
+            }
+            
             console.error('GitHub API error:', error);
-            throw error;
+            throw new Error('NETWORK_ERROR');
         }
     }
     
@@ -224,9 +368,15 @@ $pageContents .= <<<'EOGITJS'
         const hours = Math.floor(diff / 3600000);
         const days = Math.floor(diff / 86400000);
         
-        if (minutes < 60) return `il y a ${minutes}min`;
-        if (hours < 24) return `il y a ${hours}h`;
-        return `il y a ${days}j`;
+        if (currentLang === 'fr') {
+            if (minutes < 60) return `il y a ${minutes}min`;
+            if (hours < 24) return `il y a ${hours}h`;
+            return `il y a ${days}j`;
+        } else {
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
+        }
     }
     
     function renderRepoInfo(container, data) {
@@ -251,7 +401,7 @@ $pageContents .= <<<'EOGITJS'
                 </div>
             </div>
         `).join('');
-        container.innerHTML = html || '<div style="color: var(--muted);">Aucun commit récent</div>';
+        container.innerHTML = html || `<div style="color: var(--muted);">${lang.noCommits}</div>`;
     }
     
     function renderBranches(container, branches) {
@@ -260,7 +410,7 @@ $pageContents .= <<<'EOGITJS'
                 🌿 ${branch.name}
             </div>
         `).join('');
-        container.innerHTML = html || '<div style="color: var(--muted);">Aucune branche</div>';
+        container.innerHTML = html || `<div style="color: var(--muted);">${lang.noBranches}</div>`;
     }
     
     function renderPRs(container, prs) {
@@ -270,11 +420,11 @@ $pageContents .= <<<'EOGITJS'
                     <a href="${pr.html_url}" target="_blank" rel="noopener">#${pr.number} - ${pr.title}</a>
                 </div>
                 <div class="pr-meta">
-                    par @${pr.user.login} • ${formatDate(pr.created_at)}
+                    ${lang.by} @${pr.user.login} • ${formatDate(pr.created_at)}
                 </div>
             </div>
         `).join('');
-        container.innerHTML = html || '<div style="color: var(--muted);">Aucune PR ouverte</div>';
+        container.innerHTML = html || `<div style="color: var(--muted);">${lang.noPRs}</div>`;
     }
     
     function renderIssues(container, issues) {
@@ -284,7 +434,7 @@ $pageContents .= <<<'EOGITJS'
                     <a href="${issue.html_url}" target="_blank" rel="noopener">#${issue.number} - ${issue.title}</a>
                 </div>
                 <div class="issue-meta">
-                    par @${issue.user.login} • ${formatDate(issue.created_at)}
+                    ${lang.by} @${issue.user.login} • ${formatDate(issue.created_at)}
                 </div>
                 ${issue.labels.length ? `
                     <div class="issue-labels">
@@ -297,7 +447,7 @@ $pageContents .= <<<'EOGITJS'
                 ` : ''}
             </div>
         `).join('');
-        container.innerHTML = html || '<div style="color: var(--muted);">Aucune issue ouverte</div>';
+        container.innerHTML = html || `<div style="color: var(--muted);">${lang.noIssues}</div>`;
     }
     
     function getContrastColor(hexcolor) {
@@ -314,7 +464,9 @@ $pageContents .= <<<'EOGITJS'
         
         if (!owner || !repo) return;
         
-        element.innerHTML = '<div class="loading">Chargement des données GitHub...</div>';
+        element.classList.add('loading');
+        element.classList.remove('error', 'empty');
+        element.innerHTML = `<div class="loading">${lang.loading}</div>`;
         
         try {
             // Charger les données
@@ -326,14 +478,16 @@ $pageContents .= <<<'EOGITJS'
                 fetchGitHubAPI(owner, repo, '/issues')
             ]);
             
+            element.classList.remove('loading');
+            
             // Créer l'interface
             element.innerHTML = `
                 <div id="repo-info-${repo}"></div>
                 <div class="github-tabs">
-                    <button class="github-tab active" data-tab="commits">📝 Commits</button>
-                    <button class="github-tab" data-tab="branches">🌿 Branches</button>
-                    <button class="github-tab" data-tab="pulls">🔀 PRs (${pulls.length})</button>
-                    <button class="github-tab" data-tab="issues">🐛 Issues (${issues.length})</button>
+                    <button class="github-tab active" data-tab="commits">📝 ${lang.commits}</button>
+                    <button class="github-tab" data-tab="branches">🌿 ${lang.branches}</button>
+                    <button class="github-tab" data-tab="pulls">🔀 ${lang.prs} (${pulls.length})</button>
+                    <button class="github-tab" data-tab="issues">🐛 ${lang.issues} (${issues.length})</button>
                 </div>
                 <div class="github-content active" data-content="commits" id="commits-${repo}"></div>
                 <div class="github-content" data-content="branches" id="branches-${repo}"></div>
@@ -361,7 +515,33 @@ $pageContents .= <<<'EOGITJS'
             });
             
         } catch (error) {
-            element.innerHTML = '<div style="color: var(--muted);">Erreur de chargement des données GitHub</div>';
+            element.classList.remove('loading');
+            element.classList.add('error');
+            
+            let errorMessage = lang.genericError;
+            
+            if (error.message.startsWith('RATE_LIMIT:')) {
+                const minutes = error.message.split(':')[1];
+                errorMessage = lang.rateLimit + minutes + lang.rateLimitMinutes;
+            } else if (error.message === 'NOT_FOUND') {
+                errorMessage = lang.notFound;
+            } else if (error.message.startsWith('HTTP_')) {
+                const code = error.message.replace('HTTP_', '');
+                errorMessage = lang.apiError + code;
+            } else if (error.message === 'NETWORK_ERROR') {
+                errorMessage = lang.networkError;
+            }
+            
+            element.innerHTML = `
+                <div class="github-error-message">${errorMessage}</div>
+                <button class="github-retry-btn" onclick="this.closest('.github-integration').dispatchEvent(new CustomEvent('retry'))">${lang.retry}</button>
+            `;
+            
+            // Add retry listener
+            element.addEventListener('retry', function retryHandler() {
+                element.removeEventListener('retry', retryHandler);
+                loadGitHubIntegration(element);
+            });
         }
     }
     
